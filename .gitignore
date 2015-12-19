@@ -16,3 +16,4 @@ tramp
 !/tb
 !/iseconfig
 !*.xise
+!LICENSE
