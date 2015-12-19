@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="/home/t/virtual-buttons/spi_tx_ram_controller_tb_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="constants" />
+            <top_module name="numeric_std" />
+            <top_module name="spi_tx_ram_controller_tb" />
+            <top_module name="std_logic_1164" />
+            <top_module name="utils" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="10" />
+   <wvobject fp_name="/spi_tx_ram_controller_tb/ctrl.clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">.clk</obj_property>
+      <obj_property name="ObjectShortName">ctrl.clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_tx_ram_controller_tb/ctrl.reset_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">.reset_n</obj_property>
+      <obj_property name="ObjectShortName">ctrl.reset_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_tx_ram_controller_tb/spi_tx_ram_controller_1/block_size" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">block_size</obj_property>
+      <obj_property name="ObjectShortName">block_size</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_tx_ram_controller_tb/fpga_to_mcu_data_latched" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">fpga_to_mcu_data_latched</obj_property>
+      <obj_property name="ObjectShortName">fpga_to_mcu_data_latched</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_tx_ram_controller_tb/contents_count" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">contents_count</obj_property>
+      <obj_property name="ObjectShortName">contents_count</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_tx_ram_controller_tb/tx_header_byte" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">tx_header_byte</obj_property>
+      <obj_property name="ObjectShortName">tx_header_byte</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_tx_ram_controller_tb/header_byte" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">header_byte[7:0]</obj_property>
+      <obj_property name="ObjectShortName">header_byte[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_tx_ram_controller_tb/dequeue" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dequeue</obj_property>
+      <obj_property name="ObjectShortName">dequeue</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_tx_ram_controller_tb/request_more_data" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">request_more_data</obj_property>
+      <obj_property name="ObjectShortName">request_more_data</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_tx_ram_controller_tb/tb_location" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">tb_location</obj_property>
+      <obj_property name="ObjectShortName">tb_location</obj_property>
+   </wvobject>
+</wave_config>

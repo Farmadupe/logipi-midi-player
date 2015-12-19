@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="/home/t/virtual-buttons/spi_tb_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="constants" />
+            <top_module name="math_real" />
+            <top_module name="numeric_std" />
+            <top_module name="spi_tb" />
+            <top_module name="std_logic_1164" />
+            <top_module name="utils" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="7" />
+   <wvobject fp_name="/spi_tb/ctrl.reset_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">.reset_n</obj_property>
+      <obj_property name="ObjectShortName">ctrl.reset_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_tb/ctrl.clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">.clk</obj_property>
+      <obj_property name="ObjectShortName">ctrl.clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="group9" type="group">
+      <obj_property name="label">spi_sigs</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/spi_tb/uut/cs_n" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">cs_n</obj_property>
+         <obj_property name="ObjectShortName">cs_n</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/sclk" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sclk</obj_property>
+         <obj_property name="ObjectShortName">sclk</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/mosi" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">mosi</obj_property>
+         <obj_property name="ObjectShortName">mosi</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/miso" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">miso</obj_property>
+         <obj_property name="ObjectShortName">miso</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/request_more_from_mcu" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">request_more_from_mcu</obj_property>
+         <obj_property name="ObjectShortName">request_more_from_mcu</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group26" type="group">
+      <obj_property name="label">queue</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/spi_tb/uut/tx_fifo/next_write_addr" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">next_write_addr[6:0]</obj_property>
+         <obj_property name="ObjectShortName">next_write_addr[6:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_fifo/enqueue" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">enqueue</obj_property>
+         <obj_property name="ObjectShortName">enqueue</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_fifo/dequeue" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dequeue</obj_property>
+         <obj_property name="ObjectShortName">dequeue</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_fifo/write_in_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">write_in_data[7:0]</obj_property>
+         <obj_property name="ObjectShortName">write_in_data[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_fifo/read_out_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">read_out_data[7:0]</obj_property>
+         <obj_property name="ObjectShortName">read_out_data[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_fifo/empty" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">empty</obj_property>
+         <obj_property name="ObjectShortName">empty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_fifo/full" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">full</obj_property>
+         <obj_property name="ObjectShortName">full</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_fifo/contents_count" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">contents_count</obj_property>
+         <obj_property name="ObjectShortName">contents_count</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/spi_tb/fpga_to_mcu_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">fpga_to_mcu_data[7:0]</obj_property>
+      <obj_property name="ObjectShortName">fpga_to_mcu_data[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="group26" type="group">
+      <obj_property name="label">tx_controller</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/spi_tb/uut/tx_controller/fpga_to_mcu_data_latched" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">fpga_to_mcu_data_latched</obj_property>
+         <obj_property name="ObjectShortName">fpga_to_mcu_data_latched</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_controller/contents_count" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">contents_count</obj_property>
+         <obj_property name="ObjectShortName">contents_count</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_controller/tx_header_byte" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">tx_header_byte</obj_property>
+         <obj_property name="ObjectShortName">tx_header_byte</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_controller/header_byte" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">header_byte[7:0]</obj_property>
+         <obj_property name="ObjectShortName">header_byte[7:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_controller/dequeue" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dequeue</obj_property>
+         <obj_property name="ObjectShortName">dequeue</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_controller/request_more_data" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">request_more_data</obj_property>
+         <obj_property name="ObjectShortName">request_more_data</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_controller/remaining_bytes_this_msg" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">remaining_bytes_this_msg</obj_property>
+         <obj_property name="ObjectShortName">remaining_bytes_this_msg</obj_property>
+      </wvobject>
+      <wvobject fp_name="/spi_tb/uut/tx_controller/header_byte_int" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">header_byte_int[7:0]</obj_property>
+         <obj_property name="ObjectShortName">header_byte_int[7:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/spi_tb/uut/next_tx_byte" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">next_tx_byte[7:0]</obj_property>
+      <obj_property name="ObjectShortName">next_tx_byte[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+</wave_config>

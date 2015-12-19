@@ -1,0 +1,43 @@
+NET "clk_50mhz" LOC = P85;
+NET "clk_50mhz" IOSTANDARD = LVTTL;
+NET "clk_50mhz" TNM_NET = "clk";
+
+#buttons and switches
+NET "pb_0" LOC = P101;
+NET "pb_0" IOSTANDARD = LVTTL;
+NET "pb_1" LOC = P102;
+NET "pb_1" IOSTANDARD = LVTTL;
+NET "sw_0" LOC = P99;
+NET "sw_0" IOSTANDARD = LVTTL;
+NET "sw_1" LOC = P100;
+NET "sw_1" IOSTANDARD = LVTTL;
+
+#leds
+NET "led_0" LOC = P105;
+NET "led_0" IOSTANDARD = LVTTL;
+NET "led_1" LOC = P104;
+NET "led_1" IOSTANDARD = LVTTL;
+
+#uart comms
+NET "pi_to_fpga_pin" LOC = P83;
+NET "pi_to_fpga_pin" IOSTANDARD = LVTTL;
+NET "fpga_to_pi_pin" LOC = P82;
+NET "fpga_to_pi_pin" IOSTANDARD = LVTTL;
+
+#spi pins
+NET "cs_n"                  LOC="P79" | IOSTANDARD = LVTTL;
+NET "sclk"                  LOC="P70" | IOSTANDARD = LVTTL;
+NET "mosi"                  LOC="P65" | IOSTANDARD = LVTTL;
+NET "miso"                  LOC="P75" | IOSTANDARD = LVTTL;
+NET "request_more_from_mcu" LOC="P81" | IOSTANDARD = LVTTL;
+
+#PWM out!
+#net "audio_output_pin" slew="QUIETIO";
+#net "audio_output_pin"          LOC="P5"   |IOSTANDARD = LVTTL;
+
+#light square out
+NET "light_square_data" LOC = P133;
+NET "light_square_data" IOSTANDARD = LVTTL;
+
+NET "clk_50mhz" TNM_NET = "clk_50mhz";
+TIMESPEC TS_clk_50mhz = PERIOD "clk_50mhz" 20 ns HIGH 50 %;

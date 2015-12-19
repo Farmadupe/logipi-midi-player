@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="/home/t/virtual-buttons/top_tb_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="button_pkg" />
+            <top_module name="constants" />
+            <top_module name="math_real" />
+            <top_module name="numeric_std" />
+            <top_module name="std_logic_1164" />
+            <top_module name="top_tb" />
+            <top_module name="uart_constants" />
+            <top_module name="uart_functions" />
+            <top_module name="utils" />
+            <top_module name="ws2812_constant_colours" />
+            <top_module name="ws2812_data" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="5" />
+   <wvobject fp_name="group8" type="group">
+      <obj_property name="label">discrete</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="group6" type="group">
+         <obj_property name="label">spi discrete</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/top_tb/sclk" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">sclk</obj_property>
+            <obj_property name="ObjectShortName">sclk</obj_property>
+         </wvobject>
+         <wvobject fp_name="/top_tb/cs_n" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">cs_n</obj_property>
+            <obj_property name="ObjectShortName">cs_n</obj_property>
+         </wvobject>
+         <wvobject fp_name="/top_tb/mosi" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">mosi</obj_property>
+            <obj_property name="ObjectShortName">mosi</obj_property>
+         </wvobject>
+         <wvobject fp_name="/top_tb/miso" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">miso</obj_property>
+            <obj_property name="ObjectShortName">miso</obj_property>
+         </wvobject>
+         <wvobject fp_name="/top_tb/request_more_from_mcu" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">request_more_from_mcu</obj_property>
+            <obj_property name="ObjectShortName">request_more_from_mcu</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="group7" type="group">
+         <obj_property name="label">uart discrete</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/top_tb/pi_to_fpga_pin" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">pi_to_fpga_pin</obj_property>
+            <obj_property name="ObjectShortName">pi_to_fpga_pin</obj_property>
+         </wvobject>
+         <wvobject fp_name="/top_tb/fpga_to_pi_pin" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">fpga_to_pi_pin</obj_property>
+            <obj_property name="ObjectShortName">fpga_to_pi_pin</obj_property>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_1/ctrl" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">ctrl</obj_property>
+      <obj_property name="ObjectShortName">ctrl</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_1/contents_count" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">contents_count</obj_property>
+      <obj_property name="ObjectShortName">contents_count</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_1/spi_tx_buffer_full" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">spi_tx_buffer_full</obj_property>
+      <obj_property name="ObjectShortName">spi_tx_buffer_full</obj_property>
+   </wvobject>
+   <wvobject fp_name="group30" type="group">
+      <obj_property name="label">circular_queue</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/top_tb/top_1/spi_top_1/tx_fifo/contents_count" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">contents_count</obj_property>
+         <obj_property name="ObjectShortName">contents_count</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_tb/top_1/spi_top_1/tx_fifo/full" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">full</obj_property>
+         <obj_property name="ObjectShortName">full</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_tb/top_1/spi_top_1/tx_fifo/empty" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">empty</obj_property>
+         <obj_property name="ObjectShortName">empty</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>
