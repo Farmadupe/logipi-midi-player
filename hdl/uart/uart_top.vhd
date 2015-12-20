@@ -14,10 +14,7 @@ entity uart_top is
     uart_tx : out std_logic;
 
     rx_data  : out std_logic_vector(7 downto 0);
-    received : out std_logic            --;
-
-   --tx_data : in std_logic_vector(7 downto 0);
-   --send    : in std_logic
+    received : out std_logic
     );
 end;
 

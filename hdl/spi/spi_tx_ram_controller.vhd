@@ -8,7 +8,7 @@ use virtual_button_lib.constants.all;
 
 entity spi_tx_ram_controller is
   generic(
-    block_size : integer
+    tx_max_block_size : integer
     );
   port(
     ctrl : in ctrl_t;
@@ -30,7 +30,7 @@ architecture rtl of spi_tx_ram_controller is
 
   -- We need to latch the number of bytes being sent if we are in the middle of
   -- a message
-  signal remaining_bytes_this_msg : integer range 0 to block_size;
+  signal remaining_bytes_this_msg : integer range 0 to tx_max_block_size;
   signal header_byte_int          : std_logic_vector(7 downto 0);
   
 begin
@@ -40,9 +40,9 @@ begin
     if rising_edge(ctrl.clk) then
 
       -- Calculate header_byte 
-      if contents_count > block_size then
+      if contents_count > tx_max_block_size then
         header_byte_int <=
-          std_logic_vector(to_unsigned(block_size, header_byte_int'length));
+          std_logic_vector(to_unsigned(tx_max_block_size, header_byte_int'length));
       else
         header_byte_int <=
           std_logic_vector(to_unsigned(contents_count, header_byte_int'length));

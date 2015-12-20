@@ -8,7 +8,7 @@ use virtual_button_lib.constants.all;
 entity spi_top is
   generic(
     tx_ram_depth : integer;
-    block_size   : integer;
+    tx_max_block_size   : integer;
     cpol         : integer;
     cpha         : integer
     );
@@ -32,7 +32,7 @@ entity spi_top is
 
 
     -- debug from transmitter
-    next_byte_index : out integer range 0 to block_size - 1;
+    next_byte_index : out integer range 0 to tx_max_block_size - 1;
     full            : out std_logic;
     contents_count  : out integer range 0 to tx_ram_depth
     );
@@ -54,7 +54,7 @@ begin
     generic map (
       cpol       => cpol,
       cpha       => cpha,
-      block_size => block_size)
+      tx_max_block_size => tx_max_block_size)
     port map (
       ctrl            => ctrl,
       cs_n            => cs_n,
@@ -92,7 +92,7 @@ begin
 
   tx_controller : entity virtual_button_lib.spi_tx_ram_controller
     generic map(
-      block_size => block_size)
+      tx_max_block_size => tx_max_block_size)
     port map(
       ctrl => ctrl,
 

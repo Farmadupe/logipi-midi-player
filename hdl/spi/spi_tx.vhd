@@ -7,9 +7,9 @@ use virtual_button_lib.constants.all;
 
 entity spi_tx is
   generic (
-    cpol       : integer;
-    cpha       : integer;
-    block_size : integer
+    cpol              : integer;
+    cpha              : integer;
+    tx_max_block_size : integer
     );
   port(
     ctrl : in ctrl_t;
@@ -23,7 +23,7 @@ entity spi_tx is
     data         : in  std_logic_vector(spi_word_length - 1 downto 0);
     data_latched : out std_logic;
 
-    next_byte_index : out integer range 0 to block_size - 1
+    next_byte_index : out integer range 0 to tx_max_block_size - 1
     );
 end;
 
@@ -47,7 +47,7 @@ architecture rtl of spi_tx is
 
   constant bit_index_reset : integer := 0;
 
-  signal next_byte_index_int : integer range 0 to block_size - 1;
+  signal next_byte_index_int : integer range 0 to tx_max_block_size - 1;
 begin
 
   prevent_metastability : process (ctrl.clk) is
@@ -123,7 +123,7 @@ begin
 
     procedure increment_byte_index is
     begin
-      if next_byte_index_int = block_size - 1 then
+      if next_byte_index_int = tx_max_block_size - 1 then
         next_byte_index_int <= 0;
       else
         next_byte_index_int <= next_byte_index_int + 1;
