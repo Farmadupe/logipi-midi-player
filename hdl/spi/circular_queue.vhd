@@ -41,9 +41,6 @@ architecture rtl of circular_queue is
   signal empty_int          : std_logic;
   signal contents_count_int : natural range 0 to queue_depth;
 
---signal successful_enqueue_strobe  : std_logic;
---signal successful_dequeue_strobe  : std_logic;
---signal last_operation_was_enqueue : std_logic;
 begin
   ram_1 : entity virtual_button_lib.byte_ram
     generic map(
@@ -58,34 +55,6 @@ begin
 
       read_out => read_out_data);
 
-  --calc_full : process(ctrl.clk) is
-  --begin
-  --  if rising_edge(ctrl.clk) then
-  --    if (read_addr = next_write_addr) and last_operation_was_enqueue = '1' then
-  --      full_int <= '1';
-  --    else
-  --      full_int <= '0';
-  --    end if;
-  --  end if;
-  --end process;
-
-  --emptying : process (ctrl.clk) is
-  --begin
-  --  if rising_edge(ctrl.clk) then
-  --    if read_addr = next_write_addr and last_operation_was_enqueue = '0' then
-  --      empty_int <= '1';
-  --    else
-  --      empty_int <= '0';
-  --    end if;
-  --  end if;
-  --end process;
-
-
-  --full_int <= '1' when (read_addr = next_write_addr) and last_operation_was_enqueue = '1' else
-  --            '0';
-
-  --empty_int <= '1' when (read_addr = next_write_addr) and last_operation_was_enqueue = '0' else
-  --             '0';
   
   calc_contents_count : process(ctrl.clk) is
   begin

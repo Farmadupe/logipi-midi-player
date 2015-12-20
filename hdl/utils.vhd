@@ -7,18 +7,6 @@ package utils is
     reset_n : std_logic;
   end record;
 
-  type counter_out_t is record
-    done : std_logic;
-  end record;
-
-  type uart_data_t is record
-    rx_data  : std_logic_vector(7 downto 0);
-    received : std_logic;
-
-    tx_data : std_logic_vector(7 downto 0);
-    send    : std_logic;
-  end record;
-
   function calc_delay_clocks(clock_period : in time;
                              delay_length : in time) return integer;
 
