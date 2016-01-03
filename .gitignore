@@ -13,6 +13,7 @@ tramp
 !.gitignore
 !/hdl
 !/constraint
+!/src
 !/tb
 !/iseconfig
 !*.xise
