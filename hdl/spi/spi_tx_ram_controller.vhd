@@ -15,6 +15,7 @@ entity spi_tx_ram_controller is
 
     fpga_to_mcu_data_latched : in std_logic;
     contents_count           : in integer;
+    second_bit_sent          : in std_logic;
 
     tx_header_byte : out std_logic;
     header_byte    : out std_logic_vector(7 downto 0);
@@ -32,7 +33,8 @@ architecture rtl of spi_tx_ram_controller is
   -- a message
   signal remaining_bytes_this_msg : integer range 0 to tx_max_block_size;
   signal header_byte_int          : std_logic_vector(7 downto 0);
-  
+
+  signal second_bit_sent_has_been_1_since_last_latch : std_logic;
 begin
 
   calc_stuff : process(ctrl.clk) is
@@ -64,6 +66,21 @@ begin
 
   end process;
 
+  calc_second_bit_sent_has_been_1_since_last_latch : process(ctrl.clk) is
+  begin
+    if rising_edge(ctrl.clk) then
+      if ctrl.reset_n = '0' then
+        second_bit_sent_has_been_1_since_last_latch <= '0';
+      else
+        if second_bit_sent = '1' then
+          second_bit_sent_has_been_1_since_last_latch <= '1';
+        elsif fpga_to_mcu_data_latched = '1' then
+          second_bit_sent_has_been_1_since_last_latch <= '0';
+        end if;
+      end if;
+    end if;
+  end process;
+
 
   calc_remaining_bytes : process(ctrl.clk) is
   begin
@@ -73,7 +90,9 @@ begin
         remaining_bytes_this_msg <= 0;
       else
         dequeue <= '0';
-        if fpga_to_mcu_data_latched = '1' then
+        if fpga_to_mcu_data_latched = '1' and
+          second_bit_sent_has_been_1_since_last_latch = '1' then
+
           if remaining_bytes_this_msg = 0 then
             remaining_bytes_this_msg <= to_integer(unsigned(header_byte_int));
           else

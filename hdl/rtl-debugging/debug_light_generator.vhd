@@ -11,16 +11,16 @@ use virtual_button_lib.ws2812_constant_colours.all;
 entity debug_light_generator is
   generic(
     spi_tx_max_block_size : integer;
-    spi_tx_ram_depth : integer
+    spi_tx_ram_depth      : integer
     );
   port(
     ctrl : in ctrl_t;
 
-    spi_tx_buffer_full  : in std_logic;
-    contents_count      : in integer range 0 to spi_tx_ram_depth;
-    buttons             : in button_arr;
-    spi_next_byte_index : in integer range 0 to spi_tx_max_block_size - 1;
-    enable_spi_tx       : in std_logic;
+    spi_tx_buffer_full    : in std_logic;
+    contents_count        : in integer range 0 to spi_tx_ram_depth;
+    buttons               : in button_arr;
+    spi_next_byte_index   : in integer range 0 to spi_tx_max_block_size - 1;
+    enable_spi_tx         : in std_logic;
     request_more_from_mcu : in std_logic;
 
     light_square_data : out std_logic
@@ -37,7 +37,7 @@ architecture rtl of debug_light_generator is
 
   -- whenever the tx buffer fills all the way up, display a light for 0.5 sec.
   signal held_spi_tx_buffer_full            : std_logic;
-  constant spi_tx_buffer_full_counter_limit : integer := 500 ms / clk_period;
+  constant spi_tx_buffer_full_counter_limit : integer := 5 sec / clk_period;
   signal spi_tx_buffer_full_counter         : integer range 0 to spi_tx_buffer_full_counter_limit;
 begin
   
@@ -73,16 +73,12 @@ begin
 
         if spi_next_byte_index = 0 then
           ws2812_data(7) <= ws2812_clear;
-        elsif spi_next_byte_index < 2 then
+        elsif spi_next_byte_index < spi_tx_max_block_size / 3 then
           ws2812_data(7) <= ws2812_green;
-        elsif spi_next_byte_index < 4 then
-          ws2812_data(7) <= ws2812_pink;
-        elsif spi_next_byte_index < 6 then
+        elsif spi_next_byte_index < 2 * (spi_tx_max_block_size / 3) then
           ws2812_data(7) <= ws2812_red;
-        elsif spi_next_byte_index < 8 then
-          ws2812_data(7) <= ws2812_purple;
-        elsif spi_next_byte_index < 10 then
-          ws2812_data(7) <= ws2812_yellow;
+        else
+          ws2812_data(7) <= ws2812_blue;
         end if;
         
       else
@@ -107,6 +103,10 @@ begin
       end if;
 
       ws2812_data(16 to 23) <= contents_count_debug;
+
+      if buttons(o).toggle = '1' then
+        ws2812_data <= (others => ws2812_clear);
+      end if;
 
 
     end if;

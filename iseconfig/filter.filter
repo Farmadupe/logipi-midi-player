@@ -4,29 +4,42 @@
 <!--advised that users do not directly edit the contents of this file.                               -->
 <!--                                                                                                 -->
 <filters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation='filter.xsd'>
-<filter task="xst" file="Xst" num="3210" type="info"><arg index="1" match_type="wildcard">*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">buttons*</arg><arg index="4" match_type="wildcard">*</arg></filter>
-<filter task="xst" file="Xst" num="1290" type="warning"><arg index="1" match_type="wildcard">gen_buttons.*</arg><arg index="2" match_type="wildcard">*</arg></filter>
-<filter task="xst" file="Xst" num="1896" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2">0</arg><arg index="3">top</arg></filter>
-<filter task="xst" file="Xst" num="2677" type="warning"><arg index="1" match_type="wildcard">many_buttons_1/*</arg><arg index="2">top</arg></filter>
-<filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2">0</arg><arg index="3">top</arg></filter>
-<filter task="xst" file="Xst" num="2935" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2">top</arg><arg index="3">00000000</arg></filter>
-<filter task="xst" file="Xst" num="2404" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">*</arg><arg index="4" match_type="wildcard">*</arg><arg index="5">top</arg></filter>
-<filter task="xst" file="HDLCompiler" num="634" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg></filter>
-<filter task="xst" file="Xst" num="2261" type="info"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2">top</arg><arg index="3" match_type="wildcard">*</arg><arg index="4" match_type="wildcard">*</arg></filter>
-<filter task="xst" file="Xst" num="1293" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3">top</arg></filter>
-<filter task="xst" file="Xst" num="1710" type="warning"><arg index="1" match_type="wildcard">timer_limit_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3">ws2812_drv</arg></filter>
-<filter task="xst" file="Xst" num="1293" type="warning"><arg index="1" match_type="wildcard">ws2812_drv_1/current_led_int_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3">top</arg></filter>
-<filter task="xst" file="Xst" num="647" type="warning"><arg index="1">ctrl_reset_n</arg></filter>
-<filter task="xst" file="Xst" num="1896" type="warning"><arg index="1" match_type="wildcard">counter_max_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3">uart_rx</arg></filter>
+<filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">header_byte_int_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">spi_tx_ram_controller</arg></filter>
+<filter task="xst" file="Xst" num="1896" type="warning"><arg index="1" match_type="wildcard">contents_count_debug*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">debug_contents_count</arg></filter>
+<filter task="xst" file="Xst" num="1710" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">top</arg></filter>
 <filter task="xst" file="Xst" num="2261" type="info"><arg index="1">counter_max_0</arg><arg index="2">uart_rx</arg><arg index="3">4 FFs/Latches</arg><arg index="4">&lt;counter_max_3&gt; &lt;counter_max_5&gt; &lt;counter_max_9&gt; &lt;counter_max_11&gt; </arg></filter>
-<filter task="xst" file="Xst" num="1293" type="warning"><arg index="1" match_type="wildcard">counter_max_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3">uart_rx</arg></filter>
-<filter task="xst" file="Xst" num="1293" type="warning"><arg index="1" match_type="wildcard">counter_max_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3">uart_rx_1</arg></filter>
-<filter task="xst" file="Xst" num="1710" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3">top</arg></filter>
-<filter task="xst" file="Xst" num="2261" type="info"><arg index="1" match_type="wildcard">spi_top_1/spi_tx_1/*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3">FF/Latch</arg><arg index="4" match_type="wildcard">&lt;spi_top_1/spi_rx_1/*&gt; </arg></filter>
-<filter task="xst" file="Xst" num="1710" type="warning"><arg index="1" match_type="wildcard">uart_data_*</arg><arg index="2">0</arg><arg index="3">uart_tx</arg></filter>
-<filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">uart_data_*</arg><arg index="2">1</arg><arg index="3">uart_tx</arg></filter>
-<filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">timer_limit_*</arg><arg index="2">0</arg><arg index="3">ws2812_drv</arg></filter>
-<filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">header_byte_int_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3">spi_tx_ram_controller</arg></filter>
-<filter task="xst" file="Xst" num="1710" type="warning"><arg index="1" match_type="wildcard">header_byte_int_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3">spi_tx_ram_controller</arg></filter>
-<filter task="xst" file="Xst" num="1293" type="warning"><arg index="1" match_type="wildcard">spi_top_1/spi_tx_1/bit_index_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3">top</arg></filter>
+<filter task="xst" file="Xst" num="1293" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">top</arg></filter>
+<filter task="xst" file="Xst" num="2261" type="info"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">top</arg><arg index="3" match_type="wildcard">*</arg><arg index="4" match_type="wildcard">*</arg></filter>
+<filter task="xst" file="Xst" num="1293" type="warning"><arg index="1" match_type="wildcard">spi_top_1/spi_tx_1/bit_index_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">top</arg></filter>
+<filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">timer_limit_*</arg><arg index="2" match_type="wildcard">0</arg><arg index="3" match_type="wildcard">ws2812_drv</arg></filter>
+<filter task="xst" file="Xst" num="1290" type="warning"><arg index="1" match_type="wildcard">gen_buttons.*</arg><arg index="2" match_type="wildcard">many_buttons*</arg></filter>
+<filter task="xst" file="Xst" num="1896" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">0</arg><arg index="3" match_type="wildcard">top</arg></filter>
+<filter task="xst" file="Xst" num="2935" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">top</arg><arg index="3" match_type="wildcard">00000000</arg></filter>
+<filter task="xst" file="Xst" num="2261" type="info"><arg index="1" match_type="wildcard">spi_top_1/spi_tx_1/*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">FF/Latch</arg><arg index="4" match_type="wildcard">&lt;spi_top_1/spi_rx_1/*&gt; </arg></filter>
+<filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">0</arg><arg index="3" match_type="wildcard">top</arg></filter>
+<filter task="xst" file="Xst" num="647" type="warning"><arg index="1">ctrl_reset_n</arg></filter>
+<filter task="xst" file="Xst" num="2404" type="warning"></filter>
+<filter task="xst" file="Xst" num="1896" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">debug_light_generator</arg></filter>
+<filter task="xst" file="Xst" num="1710" type="warning"><arg index="1" match_type="wildcard">timer_limit_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">ws2812_drv</arg></filter>
+<filter task="xst" file="Xst" num="1293" type="warning"><arg index="1" match_type="wildcard">contents_count_debug*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">debug_contents_count*</arg></filter>
+<filter task="xst" file="Xst" num="1710" type="warning"></filter>
+<filter task="xst" file="HDLCompiler" num="634" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg></filter>
+<filter task="xst" file="Xst" num="2261" type="info"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">debug_light_generator</arg><arg index="3" match_type="wildcard">*</arg><arg index="4" match_type="wildcard">*</arg></filter>
+<filter task="xst" file="Xst" num="2677" type="warning"><arg index="1" match_type="wildcard">many_buttons_1/gen_buttons.*.single_button_1/*</arg><arg index="2" match_type="wildcard">*</arg></filter>
+<filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">uart_data_*</arg><arg index="2" match_type="wildcard">1</arg><arg index="3" match_type="wildcard">uart_tx</arg></filter>
+<filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">debug_light_generator_1/ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">top</arg></filter>
+<filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">debug_light_generator</arg></filter>
+<filter task="xst" file="Xst" num="2261" type="info"></filter>
+<filter task="xst" file="Xst" num="1896" type="warning"><arg index="1" match_type="wildcard">counter_max_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">uart_rx</arg></filter>
+<filter task="xst" file="Xst" num="1293" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">*</arg></filter>
+<filter task="xst" file="Xst" num="2404" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">*</arg><arg index="4" match_type="wildcard">*</arg><arg index="5" match_type="wildcard">top</arg></filter>
+<filter task="xst" file="Xst" num="1710" type="warning"><arg index="1" match_type="wildcard">uart_data_*</arg><arg index="2" match_type="wildcard">0</arg><arg index="3" match_type="wildcard">uart_tx</arg></filter>
+<filter task="xst" file="Xst" num="1293" type="warning"><arg index="1" match_type="wildcard">counter_max_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">uart_rx_1</arg></filter>
+<filter task="xst" file="Xst" num="1710" type="warning"><arg index="1" match_type="wildcard">header_byte_int_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">spi_tx_ram_controller</arg></filter>
+<filter task="xst" file="Xst" num="2261" type="info"><arg index="1" match_type="wildcard">contents_count_debug*</arg><arg index="2" match_type="wildcard">debug_contents_count_*</arg><arg index="3" match_type="wildcard">*</arg><arg index="4" match_type="wildcard">*</arg></filter>
+<filter task="xst" file="Xst" num="2261" type="info"><arg index="1" match_type="wildcard">contents_count_debug*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">*</arg><arg index="4" match_type="wildcard">*</arg></filter>
+<filter task="xst" file="Xst" num="2261" type="info"><arg index="1" match_type="wildcard">debug_light_generator_1/ws2812_data*</arg><arg index="2" match_type="wildcard">top</arg><arg index="3" match_type="wildcard">*</arg><arg index="4" match_type="wildcard">*</arg></filter>
+<filter task="xst" file="Xst" num="647" type="warning"><arg index="1" match_type="wildcard">buttons*</arg></filter>
+<filter task="xst" file="Xst" num="1293" type="warning"><arg index="1" match_type="wildcard">counter_max_*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">uart_rx</arg></filter>
+<filter task="xst" file="Xst" num="2261" type="info"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">debug_light_generator_1</arg><arg index="3" match_type="wildcard">*</arg><arg index="4" match_type="wildcard">*</arg></filter>
 </filters>

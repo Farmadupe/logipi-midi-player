@@ -47,22 +47,22 @@ architecture rtl of top is
   signal buttons : button_arr;
 
   -- spi signals
-  constant spi_tx_max_block_size : integer := 10;
+  constant spi_tx_max_block_size : integer := 5;
 
   -- each spartan 6 RAMB8BWER is 1024 bits long. There is no point in reducing
   -- this number to less than 1024.
-  constant spi_tx_ram_depth      : integer := 1024;
+  constant spi_tx_ram_depth : integer := 4096;
 
   signal spi_new_mcu_to_fpga_data     : std_logic;
   signal spi_mcu_to_fpga_data         : std_logic_vector(spi_word_length - 1 downto 0);
   signal spi_fpga_to_mcu_data         : std_logic_vector(spi_word_length - 1 downto 0);
   signal spi_enqueue_fpga_to_mcu_data : std_logic;
   signal spi_next_byte_index          : integer range 0 to spi_tx_max_block_size - 1;
-  signal spi_contents_count : integer range 0 to spi_tx_ram_depth;
-  signal spi_tx_data_counter_done : std_logic;
-  signal spi_tx_buffer_full       : std_logic;
-  
-  signal enable_spi_tx            : std_logic;
+  signal spi_contents_count           : integer range 0 to spi_tx_ram_depth;
+  signal spi_tx_data_counter_done     : std_logic;
+  signal spi_tx_buffer_full           : std_logic;
+
+  signal enable_spi_tx : std_logic;
 
 begin
 
@@ -157,22 +157,8 @@ begin
     end if;
   end process;
 
-  generate_something_to_tx_up_spi : process(ctrl.clk) is
-  begin
-    if rising_edge(ctrl.clk) then
-      if ctrl.reset_n = '0' then
-        spi_fpga_to_mcu_data         <= (others => '0');
-        spi_enqueue_fpga_to_mcu_data <= '0';
-      else
-        spi_enqueue_fpga_to_mcu_data <= '0';
-        if spi_tx_data_counter_done = '1' and enable_spi_tx = '1' then
-          spi_fpga_to_mcu_data <= std_logic_vector(unsigned(spi_fpga_to_mcu_data) + 1)
-                              xor spi_mcu_to_fpga_data;
-          spi_enqueue_fpga_to_mcu_data <= '1';
-        end if;
-      end if;
-    end if;
-  end process;
+  spi_fpga_to_mcu_data <= spi_mcu_to_fpga_data;
+  spi_enqueue_fpga_to_mcu_data <= spi_new_mcu_to_fpga_data;
 
 
   spi_tx_data_counter : entity virtual_button_lib.counter
@@ -188,11 +174,14 @@ begin
 
 
   -- Enable/disable spi data transmission.
-  enable_spi_tx <= buttons(e).toggle;
+  --enable_spi_tx <= buttons(e).toggle;
+  enable_spi_tx <= '1';
 
   led_1 <= '0';
 
-  request_more_from_mcu <= request_more_from_mcu_int;
+  request_more_from_mcu <= enable_spi_tx;
+
+  --request_more_from_mcu <= request_more_from_mcu_int;
 
 end rtl;
 

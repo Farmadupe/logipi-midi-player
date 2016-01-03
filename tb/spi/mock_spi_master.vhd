@@ -59,9 +59,15 @@ begin
       end loop;
     end loop;
 
+    --implement porch if at end of msg.
+    if force_cs_low then
+      wait for duty_time * 0.5;
+    end if;
+    
     desired_cs_n <= '1';
     clk_is_base <= true;
     mosi <= '0';
+
   end process sender;
 
   calc_sclk : process (cpol, clk_is_base) is

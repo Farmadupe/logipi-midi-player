@@ -20,9 +20,11 @@ entity spi_tx is
     miso : out std_logic;
 
     -- internal interface
-    data         : in  std_logic_vector(spi_word_length - 1 downto 0);
-    data_latched : out std_logic;
+    data            : in  std_logic_vector(spi_word_length - 1 downto 0);
+    data_latched    : out std_logic;
+    second_bit_sent : out std_logic;
 
+    -- debug out
     next_byte_index : out integer range 0 to tx_max_block_size - 1
     );
 end;
@@ -94,12 +96,16 @@ begin
   generate_latch : process(ctrl.clk) is
   begin
     if rising_edge(ctrl.clk) then
-      if (cs_n_d2 = '1' and cs_n_d1 = '0') or
-        (bit_index = 0 and time_to_transmit = '1')then
-        latched_data <= data;
-        data_latched <= '1';
+      if ctrl.reset_n = '0' then
+        latched_data <= (others => '0');
       else
-        data_latched <= '0';
+        if (cs_n_d2 = '1' and cs_n_d1 = '0') or
+          (bit_index = 0 and time_to_transmit = '1')then
+          latched_data <= data;
+          data_latched <= '1';
+        else
+          data_latched <= '0';
+        end if;
       end if;
     end if;
   end process;
@@ -160,6 +166,22 @@ begin
       miso <= ungated_miso;
     end if;
   end process;
+
+  gen_second_byte_sent : process(ctrl.clk)
+  begin
+    if rising_edge(ctrl.clk) then
+      if ctrl.reset_n = '0' then
+        second_bit_sent <= '0';
+      else
+        if bit_index < 5 and bit_index /= 0 then
+          second_bit_sent <= '1';
+        else
+          second_bit_sent <= '0';
+        end if;
+      end if;
+    end if;
+  end process;
+
 
   next_byte_index <= next_byte_index_int;
   

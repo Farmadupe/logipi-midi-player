@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
+use ieee.numeric_std.all;
 
 library virtual_button_lib;
 use virtual_button_lib.utils.all;
@@ -7,10 +8,10 @@ use virtual_button_lib.constants.all;
 
 entity spi_top is
   generic(
-    tx_ram_depth : integer;
-    tx_max_block_size   : integer;
-    cpol         : integer;
-    cpha         : integer
+    tx_ram_depth      : integer;
+    tx_max_block_size : integer;
+    cpol              : integer;
+    cpha              : integer
     );
   port(
     ctrl : in ctrl_t;
@@ -40,6 +41,7 @@ end spi_top;
 
 architecture rtl of spi_top is
   signal fpga_to_mcu_data_latched : std_logic;
+  signal second_bit_sent          : std_logic;
   signal header_byte              : std_logic_vector(7 downto 0);
   signal read_out_data            : std_logic_vector(7 downto 0);
   signal tx_header_byte           : std_logic;
@@ -47,13 +49,16 @@ architecture rtl of spi_top is
   signal dequeue                  : std_logic;
   signal empty                    : std_logic;
 
-  signal contents_count_int : integer range 0 to tx_ram_depth;
+  signal contents_count_int           : integer range 0 to tx_ram_depth;
+  signal new_mcu_to_fpga_data_from_rx : std_logic;
+  signal remaining_bytes              : integer range 0 to 255;
+  signal mcu_to_fpga_data_int         : std_logic_vector(7 downto 0);
 begin
 
   spi_tx_1 : entity virtual_button_lib.spi_tx
     generic map (
-      cpol       => cpol,
-      cpha       => cpha,
+      cpol              => cpol,
+      cpha              => cpha,
       tx_max_block_size => tx_max_block_size)
     port map (
       ctrl            => ctrl,
@@ -62,19 +67,8 @@ begin
       miso            => miso,
       data            => next_tx_byte,
       data_latched    => fpga_to_mcu_data_latched,
+      second_bit_sent => second_bit_sent,
       next_byte_index => next_byte_index);
-
-  spi_rx_1 : entity virtual_button_lib.spi_rx
-    generic map (
-      cpol => cpol,
-      cpha => cpha)
-    port map (
-      ctrl     => ctrl,
-      sclk     => sclk,
-      cs_n     => cs_n,
-      mosi     => mosi,
-      data     => mcu_to_fpga_data,
-      new_data => new_mcu_to_fpga_data);
 
   tx_fifo : entity work.circular_queue
     generic map(
@@ -98,6 +92,7 @@ begin
 
       fpga_to_mcu_data_latched => fpga_to_mcu_data_latched,
       contents_count           => contents_count_int,
+      second_bit_sent          => second_bit_sent,
 
       tx_header_byte => tx_header_byte,
       header_byte    => header_byte,
@@ -117,6 +112,40 @@ begin
   end process;
 
   contents_count <= contents_count_int;
+
+  spi_rx_1 : entity virtual_button_lib.spi_rx
+    generic map (
+      cpol => cpol,
+      cpha => cpha)
+    port map (
+      ctrl     => ctrl,
+      sclk     => sclk,
+      cs_n     => cs_n,
+      mosi     => mosi,
+      data     => mcu_to_fpga_data_int,
+      new_data => new_mcu_to_fpga_data_from_rx);
+
+  decode_rx_frame : process(ctrl.clk) is
+  begin
+    if rising_edge(ctrl.clk) then
+      if ctrl.reset_n = '0' then
+        remaining_bytes      <= 0;
+        new_mcu_to_fpga_data <= '0';
+      else
+
+        new_mcu_to_fpga_data <= '0';
+
+        if new_mcu_to_fpga_data_from_rx = '1' and remaining_bytes = 0 then
+          remaining_bytes <= to_integer(unsigned(mcu_to_fpga_data_int));
+        elsif new_mcu_to_fpga_data_from_rx = '1' and remaining_bytes > 0 then
+          remaining_bytes      <= remaining_bytes - 1;
+          new_mcu_to_fpga_data <= '1';
+        end if;
+      end if;
+    end if;
+  end process;
+
+  mcu_to_fpga_data <= mcu_to_fpga_data_int;
 
 end rtl;
 

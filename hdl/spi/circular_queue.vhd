@@ -31,14 +31,12 @@ architecture rtl of circular_queue is
 
   --ram signals
   signal write_enable    : std_logic;
-  signal read_addr       : unsigned(addr_length - 1 downto 0);
-  signal next_write_addr : unsigned(addr_length - 1 downto 0);
-  signal data_in         : std_logic_vector(data_width downto 0);
-  signal data_out        : std_logic_vector(data_width downto 0);
+  signal read_addr       : unsigned(addr_length - 1 downto 0) := (others => '0');
+  signal next_write_addr : unsigned(addr_length - 1 downto 0) := (others => '0');
 
   -- 
-  signal full_int           : std_logic;
-  signal empty_int          : std_logic;
+  signal full_int           : std_logic := '0';
+  signal empty_int          : std_logic := '0';
   signal contents_count_int : natural range 0 to queue_depth;
 
 begin
