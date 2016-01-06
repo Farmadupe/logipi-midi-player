@@ -60,15 +60,18 @@ static void print_data(uint8_t * buf, uint32_t bytes_read)
 {
   static uint8_t remaining_bytes = 0;
   //printf("bytes read: %u\n", bytes_read);
-  for (int i = 0; i <= bytes_read; i++ ) {
-    //    if (remaining_bytes == 0 ) {
-    //      remaining_bytes = buf[i];
-    //      //printf("new remaining bytes: %u\n", remaining_bytes);
-    //    } else {
-    //      remaining_bytes -= 1;
-    putchar(buf[i]);
-    //    }
+  for (int i = 0; i < bytes_read; i++ ) {
+    if (remaining_bytes == 0 ) {
+      remaining_bytes = buf[i];
+      //printf("new remaining bytes: %u\n", remaining_bytes);
+    } else {
+      remaining_bytes -= 1;
+      putchar(buf[i]);
+    }
   }
+
+  //Make sure that the file is fully written if redirecting to a file
+  fflush(stdout);
 }
 
 static void transfer(int fd, FILE* transfer_fd)
@@ -106,7 +109,6 @@ static void transfer(int fd, FILE* transfer_fd)
     if (print_received_data) {
       print_data(rx, bytes_read + 1);
     }
-    
   }
 
   free(tx);
