@@ -48,7 +48,7 @@ architecture behavioural of top_tb is
   signal mcu_to_fpga_data : std_logic_vector(spi_word_length - 1 downto 0);
 begin
 
-  top_1 : entity work.top
+  top_1 : entity virtual_button_lib.top
     port map (
       clk_50mhz             => clk_50mhz,
       pb_0                  => pb_0,

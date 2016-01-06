@@ -47,7 +47,7 @@ architecture rtl of top is
   signal buttons : button_arr;
 
   -- spi signals
-  constant spi_tx_max_block_size : integer := 5;
+  constant spi_tx_max_block_size : integer := 100;
 
   -- each spartan 6 RAMB8BWER is 1024 bits long. There is no point in reducing
   -- this number to less than 1024.

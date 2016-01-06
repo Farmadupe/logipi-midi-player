@@ -3,7 +3,7 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="/home/t/logipi-midi-player/top_tb_isim_beh.wdb" id="1" type="auto">
+      <db_ref path="/home/t/virtual-buttons/top_tb_isim_beh.wdb" id="1" type="auto">
          <top_modules>
             <top_module name="button_pkg" />
             <top_module name="constants" />
@@ -19,7 +19,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="8" />
+   <WVObjectSize size="9" />
    <wvobject fp_name="/top_tb/top_1/ctrl" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">ctrl</obj_property>
       <obj_property name="ObjectShortName">ctrl</obj_property>
@@ -19100,6 +19100,11 @@
             <obj_property name="ObjectShortName">ram[4095]</obj_property>
          </wvobject>
       </wvobject>
+      <wvobject fp_name="/top_tb/top_1/spi_top_1/tx_fifo/contents_count" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">contents_count</obj_property>
+         <obj_property name="ObjectShortName">contents_count</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
       <wvobject fp_name="/top_tb/top_1/spi_top_1/spi_tx_1/latched_data" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">latched_data[7:0]</obj_property>
          <obj_property name="ObjectShortName">latched_data[7:0]</obj_property>
@@ -19110,6 +19115,16 @@
          <obj_property name="ObjectShortName">latched_data[7:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
+      <wvobject fp_name="/top_tb/top_1/spi_top_1/read_out_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">read_out_data[7:0]</obj_property>
+         <obj_property name="ObjectShortName">read_out_data[7:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_tb/top_1/spi_top_1/read_out_data_held" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">read_out_data_held[7:0]</obj_property>
+         <obj_property name="ObjectShortName">read_out_data_held[7:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject fp_name="/top_tb/top_1/spi_top_1/tx_fifo/dequeue" type="logic" db_ref_id="1">
       <obj_property name="DisplayName">label</obj_property>
@@ -19117,21 +19132,26 @@
       <obj_property name="ObjectShortName">dequeue</obj_property>
       <obj_property name="label">dequeue</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_1/spi_top_1/tx_controller/second_bit_sent_has_been_1_since_last_latch" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">second_bit_sent_has_been_1_since_last_latch</obj_property>
-      <obj_property name="ObjectShortName">second_bit_sent_has_been_1_since_last_latch</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_1/spi_top_1/tx_controller/second_bit_sent" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">second_bit_sent</obj_property>
-      <obj_property name="ObjectShortName">second_bit_sent</obj_property>
-   </wvobject>
    <wvobject fp_name="/top_tb/top_1/spi_top_1/spi_tx_1/bit_index" type="other" db_ref_id="1">
       <obj_property name="ElementShortName">bit_index</obj_property>
       <obj_property name="ObjectShortName">bit_index</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_1/spi_top_1/tx_controller/fpga_to_mcu_data_latched" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">fpga_to_mcu_data_latched</obj_property>
-      <obj_property name="ObjectShortName">fpga_to_mcu_data_latched</obj_property>
+   <wvobject fp_name="/top_tb/top_1/spi_top_1/tx_controller/data_fully_latched" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">data_fully_latched</obj_property>
+      <obj_property name="ObjectShortName">data_fully_latched</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_1/spi_top_1/ok_to_reveal_next_tx_byte_to_txer" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ok_to_reveal_next_tx_byte_to_txer</obj_property>
+      <obj_property name="ObjectShortName">ok_to_reveal_next_tx_byte_to_txer</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_1/spi_top_1/tx_header_byte" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">tx_header_byte</obj_property>
+      <obj_property name="ObjectShortName">tx_header_byte</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_1/spi_top_1/tx_controller/remaining_bytes_this_msg" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">remaining_bytes_this_msg</obj_property>
+      <obj_property name="ObjectShortName">remaining_bytes_this_msg</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
 </wave_config>

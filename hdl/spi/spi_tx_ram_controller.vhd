@@ -13,13 +13,13 @@ entity spi_tx_ram_controller is
   port(
     ctrl : in ctrl_t;
 
-    fpga_to_mcu_data_latched : in std_logic;
-    contents_count           : in integer;
-    second_bit_sent          : in std_logic;
+    contents_count     : in integer;
+    data_fully_latched : in std_logic;
 
-    tx_header_byte : out std_logic;
-    header_byte    : out std_logic_vector(7 downto 0);
-    dequeue        : out std_logic;
+    tx_header_byte                    : out std_logic;
+    header_byte                       : out std_logic_vector(7 downto 0);
+    dequeue                           : out std_logic;
+    ok_to_reveal_next_tx_byte_to_txer : out std_logic;
 
     request_more_data : out std_logic
 
@@ -34,7 +34,8 @@ architecture rtl of spi_tx_ram_controller is
   signal remaining_bytes_this_msg : integer range 0 to tx_max_block_size;
   signal header_byte_int          : std_logic_vector(7 downto 0);
 
-  signal second_bit_sent_has_been_1_since_last_latch : std_logic;
+  signal data_fully_latched_d1 : std_logic;
+  signal data_fully_latched_re : std_logic;
 begin
 
   calc_stuff : process(ctrl.clk) is
@@ -57,49 +58,68 @@ begin
         request_more_data <= '0';
       end if;
 
-      if remaining_bytes_this_msg = 0 then
+      if remaining_bytes_this_msg = 0 and data_fully_latched = '1' then
         tx_header_byte <= '1';
-      else
+      elsif data_fully_latched = '1' then
         tx_header_byte <= '0';
       end if;
     end if;
 
   end process;
 
-  calc_second_bit_sent_has_been_1_since_last_latch : process(ctrl.clk) is
+  calc_data_fully_latched_re : process(ctrl.clk) is
+  begin
+    if rising_edge(ctrl.clk) then
+      data_fully_latched_d1 <= data_fully_latched;
+      if data_fully_latched = '1' and data_fully_latched_d1 = '0' then
+        data_fully_latched_re <= '1';
+      else
+        data_fully_latched_re <= '0';
+      end if;
+    end if;
+  end process;
+
+  calc_remaining_bytes : process(ctrl.clk) is
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
-        second_bit_sent_has_been_1_since_last_latch <= '0';
+        remaining_bytes_this_msg <= 0;
       else
-        if second_bit_sent = '1' then
-          second_bit_sent_has_been_1_since_last_latch <= '1';
-        elsif fpga_to_mcu_data_latched = '1' then
-          second_bit_sent_has_been_1_since_last_latch <= '0';
+        if data_fully_latched_re = '1' then
+          if remaining_bytes_this_msg = 0 then
+            remaining_bytes_this_msg <= to_integer(unsigned(header_byte_int));
+          else
+            remaining_bytes_this_msg <= remaining_bytes_this_msg - 1;
+          end if;
         end if;
       end if;
     end if;
   end process;
 
 
-  calc_remaining_bytes : process(ctrl.clk) is
+  calc_dequeue : process(ctrl.clk) is
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
-        dequeue                  <= '0';
-        remaining_bytes_this_msg <= 0;
+        dequeue <= '0';
+
       else
         dequeue <= '0';
-        if fpga_to_mcu_data_latched = '1' and
-          second_bit_sent_has_been_1_since_last_latch = '1' then
 
-          if remaining_bytes_this_msg = 0 then
-            remaining_bytes_this_msg <= to_integer(unsigned(header_byte_int));
-          else
-            remaining_bytes_this_msg <= remaining_bytes_this_msg - 1;
-            dequeue                  <= '1';
-          end if;
+        if data_fully_latched_re = '1' and remaining_bytes_this_msg /= 0 then
+          dequeue <= '1';
         end if;
+      end if;
+    end if;
+  end process;
+
+  calc_ok : process(ctrl.clk) is
+  begin
+    if rising_edge(ctrl.clk) then
+      if ctrl.reset_n = '0' then
+        ok_to_reveal_next_tx_byte_to_txer <= '0';
+      else
+        ok_to_reveal_next_tx_byte_to_txer <= data_fully_latched;
       end if;
     end if;
   end process;
