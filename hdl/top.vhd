@@ -37,6 +37,8 @@ end top;
 architecture rtl of top is
   signal ctrl : ctrl_t;
 
+  signal clk : std_logic;
+
   -- uart signals
   signal uart_rx_data  : std_logic_vector(7 downto 0);
   signal uart_received : std_logic;
@@ -47,7 +49,7 @@ architecture rtl of top is
   signal buttons : button_arr;
 
   -- spi signals
-  constant spi_tx_max_block_size : integer := 100;
+  constant spi_tx_max_block_size : integer := 255;
 
   -- each spartan 6 RAMB8BWER is 1024 bits long. There is no point in reducing
   -- this number to less than 1024.
@@ -65,6 +67,12 @@ architecture rtl of top is
   signal enable_spi_tx : std_logic;
 
 begin
+
+  clock_multiplier_1 : entity virtual_button_lib.clock_multiplier
+    port map (
+      clk_in  => clk_50mhz,
+      clk_out => clk
+      );
 
   uart_top_1 : entity virtual_button_lib.uart_top
     port map (
@@ -132,7 +140,7 @@ begin
 
   -----------------------------------------------------------------------------
 
-  ctrl.clk <= clk_50mhz;
+  ctrl.clk <= clk;
 
   resetting : process (ctrl.clk) is
   begin
@@ -157,7 +165,7 @@ begin
     end if;
   end process;
 
-  spi_fpga_to_mcu_data <= spi_mcu_to_fpga_data;
+  spi_fpga_to_mcu_data         <= spi_mcu_to_fpga_data;
   spi_enqueue_fpga_to_mcu_data <= spi_new_mcu_to_fpga_data;
 
 

@@ -26,6 +26,7 @@
 <filter task="xst" file="HDLCompiler" num="634" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg></filter>
 <filter task="xst" file="Xst" num="2261" type="info"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">debug_light_generator</arg><arg index="3" match_type="wildcard">*</arg><arg index="4" match_type="wildcard">*</arg></filter>
 <filter task="xst" file="Xst" num="2677" type="warning"><arg index="1" match_type="wildcard">many_buttons_1/gen_buttons.*.single_button_1/*</arg><arg index="2" match_type="wildcard">*</arg></filter>
+<filter task="trce" file="Timing" num="3159" type="warning"></filter>
 <filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">uart_data_*</arg><arg index="2" match_type="wildcard">1</arg><arg index="3" match_type="wildcard">uart_tx</arg></filter>
 <filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">debug_light_generator_1/ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">top</arg></filter>
 <filter task="xst" file="Xst" num="1895" type="warning"><arg index="1" match_type="wildcard">ws2812_data*</arg><arg index="2" match_type="wildcard">*</arg><arg index="3" match_type="wildcard">debug_light_generator</arg></filter>

@@ -68,29 +68,30 @@ begin
 
   -- Clock process definitions
   clk_process : process
+    constant clk_period_50 : time := 1 sec / 50_000_000;
   begin
     wait for 100 us;
 
     clk_50mhz <= '0';
-    wait for clk_period/2;
+    wait for clk_period_50/2;
     clk_50mhz <= '1';
-    wait for clk_period/2;
+    wait for clk_period_50/2;
     clk_50mhz <= '0';
-    wait for clk_period/2;
+    wait for clk_period_50/2;
     clk_50mhz <= '1';
-    wait for clk_period/2;
+    wait for clk_period_50/2;
     clk_50mhz <= '0';
-    wait for clk_period/2;
+    wait for clk_period_50/2;
     clk_50mhz <= '1';
-    wait for clk_period/2;
+    wait for clk_period_50/2;
     
-    wait until enable'event or Clock'event;
+    --wait until enable'event or Clock'event;
 
     loop
       clk_50mhz <= '0';
-      wait for clk_period/2;
+      wait for clk_period_50/2;
       clk_50mhz <= '1';
-      wait for clk_period/2;
+      wait for clk_period_50/2;
     end loop;
   end process;
 
