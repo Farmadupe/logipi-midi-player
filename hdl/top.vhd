@@ -6,6 +6,7 @@ library virtual_button_lib;
 use virtual_button_lib.utils.all;
 use virtual_button_lib.constants.all;
 use virtual_button_lib.button_pkg.all;
+use virtual_button_lib.sine_lut_pkg.all;
 
 entity top is
   port(
@@ -65,6 +66,7 @@ architecture rtl of top is
   signal spi_tx_buffer_full           : std_logic;
 
   signal enable_spi_tx : std_logic;
+
 
 begin
 
@@ -137,6 +139,8 @@ begin
 
       light_square_data => light_square_data
       );
+
+
 
   -----------------------------------------------------------------------------
 
