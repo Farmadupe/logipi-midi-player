@@ -106,10 +106,11 @@ package body midi_pkg is
     -- todo calc bit width later. calc_bit_scaling_for_strides should actually be
     -- calc_bit_scaling_for_strides. Once we have the bit scaling, we can find
     -- out what the counter max is going to be by multiplying the number of
-    -- audio periods in one period of the lowest note freq and dividing it by
+    -- audio periods in one period of the lowest note freq and adding 
     -- the bit scaling
-    constant bit_scaling : integer := calc_bit_scaling_for_strides;
-    constant max_
+    constant bit_scaling                  : integer := calc_bit_scaling_for_strides;
+    constant lowest_note_period           : time    := (1 sec / calc_freq_from_midi_no(midi_note_t'low));
+    constant audio_periods_in_lowest_note : integer := (1 sec / calc_freq_from_midi_no(midi_note_t'low));
   begin
 
 
