@@ -7,6 +7,7 @@ use virtual_button_lib.utils.all;
 use virtual_button_lib.constants.all;
 use virtual_button_lib.button_pkg.all;
 use virtual_button_lib.sine_lut_pkg.all;
+use virtual_button_lib.midi_pkg.all;
 
 entity top is
   port(
@@ -36,6 +37,8 @@ entity top is
 end top;
 
 architecture rtl of top is
+  constant tom : stride_arr_t := calc_strides;
+  
   signal ctrl : ctrl_t;
 
   signal clk : std_logic;

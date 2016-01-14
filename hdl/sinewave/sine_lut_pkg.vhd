@@ -34,8 +34,8 @@ package body sine_lut_pkg is
     variable proportion : real;
   begin
     for i in 0 to num_lut_entries loop
-      proportion := i * (pi / num_lut_entries);
-      ret(i)     := to_signed(sin(proportion), 16);
+      proportion := real(i) * (math_pi / real(num_lut_entries));
+      ret(i)     := to_signed(integer(sin(proportion)), 16);
     end loop;
   end;
 end;
