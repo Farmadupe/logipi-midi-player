@@ -21,7 +21,6 @@ entity debug_light_generator is
     buttons               : in button_arr;
     spi_next_byte_index   : in integer range 0 to spi_tx_max_block_size - 1;
     enable_spi_tx         : in std_logic;
-    request_more_from_mcu : in std_logic;
 
     light_square_data : out std_logic
     );
@@ -96,8 +95,6 @@ begin
 
       if spi_tx_buffer_full = '1' then
         ws2812_data(9) <= ws2812_red;
-      elsif request_more_from_mcu = '1' then
-        ws2812_data(9) <= ws2812_green;
       else
         ws2812_data(9) <= ws2812_blue;
       end if;

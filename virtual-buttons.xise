@@ -16,7 +16,7 @@
 
   <files>
     <file xil_pn:name="hdl/top.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="26"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="27"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="25"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
@@ -29,8 +29,8 @@
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/counter.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="22"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="22"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/utils.vhd" xil_pn:type="FILE_VHDL">
@@ -44,18 +44,18 @@
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/uart/uart_rx.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="10"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="10"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="11"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="11"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/uart/uart_top.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="18"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="18"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="20"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="20"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/uart/uart_tx.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="9"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="9"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="10"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="10"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/uart/uart_constants.vhd" xil_pn:type="FILE_VHDL">
@@ -76,8 +76,8 @@
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/buttons/button_pkg.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="7"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="7"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="8"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="8"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/buttons/many_buttons.vhd" xil_pn:type="FILE_VHDL">
@@ -86,23 +86,23 @@
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/buttons/single_button.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="17"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="17"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="19"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="19"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/spi/spi_rx.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="14"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="14"/>
+      <library xil_pn:name="virtual_button_lib"/>
+    </file>
+    <file xil_pn:name="hdl/spi/spi_tx.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="13"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="13"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
-    <file xil_pn:name="hdl/spi/spi_tx.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="12"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="12"/>
-      <library xil_pn:name="virtual_button_lib"/>
-    </file>
     <file xil_pn:name="hdl/spi/spi_top.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="19"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="19"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="21"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="21"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="tb/spi/spi_tb.vhd" xil_pn:type="FILE_VHDL">
@@ -113,15 +113,15 @@
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="tb/spi/mock_spi_master.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="26"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="87"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="87"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="87"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/spi/circular_queue.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="14"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="14"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="15"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="15"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/spi/byte_ram.vhd" xil_pn:type="FILE_VHDL">
@@ -130,8 +130,8 @@
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/spi/spi_tx_ram_controller.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="11"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="11"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="12"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="12"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="tb/spi/circular_queue_tb.vhd" xil_pn:type="FILE_VHDL">
@@ -149,24 +149,24 @@
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="tb/top_tb.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="27"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="28"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="94"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="94"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="94"/>
     </file>
     <file xil_pn:name="hdl/rtl-debugging/debug_contents_count.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="16"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="16"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="17"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="17"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/rtl-debugging/debug_light_generator.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="20"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="20"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="22"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="22"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/ws2812/ws2812_drv.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="8"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="8"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="9"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="9"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/ws2812/ws2812_constant_colours.vhd" xil_pn:type="FILE_VHDL">
@@ -180,28 +180,35 @@
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/clock_multiplier.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
+      <library xil_pn:name="virtual_button_lib"/>
+    </file>
+    <file xil_pn:name="hdl/sinewave/sine_lut_pkg.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="7"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="7"/>
+      <library xil_pn:name="virtual_button_lib"/>
+    </file>
+    <file xil_pn:name="hdl/midi/midi_pkg.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="18"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="18"/>
+      <library xil_pn:name="virtual_button_lib"/>
+    </file>
+    <file xil_pn:name="hdl/midi/temp_midi_note_player.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="23"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="23"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
-    <file xil_pn:name="hdl/sinewave/sine_lut_pkg.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="15"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="15"/>
-      <library xil_pn:name="virtual_button_lib"/>
-    </file>
-    <file xil_pn:name="hdl/midi/midi_pkg.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="21"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="21"/>
-      <library xil_pn:name="virtual_button_lib"/>
-    </file>
-    <file xil_pn:name="hdl/midi/temp_midi_note_player.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
-      <library xil_pn:name="virtual_button_lib"/>
-    </file>
     <file xil_pn:name="hdl/sinewave/sine_rom.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="16"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="16"/>
+      <library xil_pn:name="virtual_button_lib"/>
+    </file>
+    <file xil_pn:name="tb/sinewave/temp_midi_note_player_tb.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
+      <association xil_pn:name="PostMapSimulation" xil_pn:seqID="97"/>
+      <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="97"/>
+      <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="97"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
   </files>
@@ -444,7 +451,7 @@
     <property xil_pn:name="Revision Select" xil_pn:value="00" xil_pn:valueState="default"/>
     <property xil_pn:name="Revision Select Tristate" xil_pn:value="Disable" xil_pn:valueState="default"/>
     <property xil_pn:name="Run Design Rules Checker (DRC)" xil_pn:value="true" xil_pn:valueState="default"/>
-    <property xil_pn:name="Run for Specified Time" xil_pn:value="false" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="Run for Specified Time" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="Run for Specified Time Map" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="Run for Specified Time Par" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="Run for Specified Time Translate" xil_pn:value="true" xil_pn:valueState="default"/>
@@ -462,7 +469,7 @@
     <property xil_pn:name="Shift Register Minimum Size spartan6" xil_pn:value="2" xil_pn:valueState="default"/>
     <property xil_pn:name="Show All Models" xil_pn:value="false" xil_pn:valueState="default"/>
     <property xil_pn:name="Simulation Model Target" xil_pn:value="VHDL" xil_pn:valueState="default"/>
-    <property xil_pn:name="Simulation Run Time ISim" xil_pn:value="4.6 sec" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="Simulation Run Time ISim" xil_pn:value="100 ms" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Simulation Run Time Map" xil_pn:value="1000 ns" xil_pn:valueState="default"/>
     <property xil_pn:name="Simulation Run Time Par" xil_pn:value="1000 ns" xil_pn:valueState="default"/>
     <property xil_pn:name="Simulation Run Time Translate" xil_pn:value="1000 ns" xil_pn:valueState="default"/>

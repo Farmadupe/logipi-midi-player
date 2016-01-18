@@ -7,7 +7,7 @@ use virtual_button_lib.utils.all;
 use virtual_button_lib.constants.all;
 use virtual_button_lib.button_pkg.all;
 use virtual_button_lib.sine_lut_pkg.all;
-use virtual_button_lib.midi_pkg.all;
+--use virtual_button_lib.midi_pkg.all;
 
 entity top is
   port(
@@ -25,11 +25,10 @@ entity top is
     fpga_to_pi_pin : out std_logic;
 
     -- spi interface;
-    sclk                  : in  std_logic;
-    cs_n                  : in  std_logic;
-    mosi                  : in  std_logic;
-    miso                  : out std_logic;
-    request_more_from_mcu : out std_logic;
+    sclk : in  std_logic;
+    cs_n : in  std_logic;
+    mosi : in  std_logic;
+    miso : out std_logic;
 
     -- light square output
     light_square_data : out std_logic
@@ -37,8 +36,7 @@ entity top is
 end top;
 
 architecture rtl of top is
-  constant tom : stride_arr_t := calc_strides;
-  
+
   signal ctrl : ctrl_t;
 
   signal clk : std_logic;
@@ -47,13 +45,11 @@ architecture rtl of top is
   signal uart_rx_data  : std_logic_vector(7 downto 0);
   signal uart_received : std_logic;
 
-  signal request_more_from_mcu_int : std_logic;
-
   -- button signals
   signal buttons : button_arr;
 
   -- spi signals
-  constant spi_tx_max_block_size : integer := 255;
+  constant spi_tx_max_block_size : integer := 200;
 
   -- each spartan 6 RAMB8BWER is 1024 bits long. There is no point in reducing
   -- this number to less than 1024.
@@ -65,19 +61,22 @@ architecture rtl of top is
   signal spi_enqueue_fpga_to_mcu_data : std_logic;
   signal spi_next_byte_index          : integer range 0 to spi_tx_max_block_size - 1;
   signal spi_contents_count           : integer range 0 to spi_tx_ram_depth;
-  signal spi_tx_data_counter_done     : std_logic;
   signal spi_tx_buffer_full           : std_logic;
 
   signal enable_spi_tx : std_logic;
 
+  --midi signals
+  signal pcm_out     : signed(15 downto 0);
+  signal new_pcm_out : std_logic;
+
 
 begin
 
-  clock_multiplier_1 : entity virtual_button_lib.clock_multiplier
-    port map (
-      clk_in  => clk_50mhz,
-      clk_out => clk
-      );
+  --clock_multiplier_1 : entity virtual_button_lib.clock_multiplier
+  --  port map (
+  --    clk_in  => clk_50mhz,
+  --    clk_out => clk
+  --    );
 
   uart_top_1 : entity virtual_button_lib.uart_top
     port map (
@@ -110,8 +109,6 @@ begin
       sclk                  => sclk,
       mosi                  => mosi,
       miso                  => miso,
-      request_more_from_mcu => request_more_from_mcu_int,
-
 
       new_mcu_to_fpga_data => spi_new_mcu_to_fpga_data,
       mcu_to_fpga_data     => spi_mcu_to_fpga_data,
@@ -124,6 +121,17 @@ begin
       full            => spi_tx_buffer_full,
       contents_count  => spi_contents_count
       );
+
+  spi_fpga_to_mcu_data <= std_logic_vector(pcm_out(15 downto 8));
+
+  temp_midi_note_player_1 : entity work.temp_midi_note_player
+    port map (
+      ctrl        => ctrl,
+      midi_no     => 69,
+      pcm_out     => pcm_out,
+      new_pcm_out => new_pcm_out);
+
+  spi_enqueue_fpga_to_mcu_data <= new_pcm_out and enable_spi_tx;
 
 
   debug_light_generator_1 : entity virtual_button_lib.debug_light_generator
@@ -138,7 +146,6 @@ begin
       buttons               => buttons,
       spi_next_byte_index   => spi_next_byte_index,
       enable_spi_tx         => enable_spi_tx,
-      request_more_from_mcu => request_more_from_mcu_int,
 
       light_square_data => light_square_data
       );
@@ -147,7 +154,7 @@ begin
 
   -----------------------------------------------------------------------------
 
-  ctrl.clk <= clk;
+  ctrl.clk <= clk_50mhz;
 
   resetting : process (ctrl.clk) is
   begin
@@ -172,31 +179,12 @@ begin
     end if;
   end process;
 
-  spi_fpga_to_mcu_data         <= spi_mcu_to_fpga_data;
-  spi_enqueue_fpga_to_mcu_data <= spi_new_mcu_to_fpga_data;
-
-
-  spi_tx_data_counter : entity virtual_button_lib.counter
-    generic map (
-      clk_period   => clk_period,
-      counter_time => 10 us)
-    port map (
-      ctrl => ctrl,
-      done => spi_tx_data_counter_done
-      );
-
-
-
 
   -- Enable/disable spi data transmission.
-  --enable_spi_tx <= buttons(e).toggle;
-  enable_spi_tx <= '1';
+  enable_spi_tx <= '1';--buttons(e).toggle;
 
   led_1 <= '0';
 
-  request_more_from_mcu <= enable_spi_tx;
-
-  --request_more_from_mcu <= request_more_from_mcu_int;
 
 end rtl;
 

@@ -17,11 +17,10 @@ entity spi_top is
     ctrl : in ctrl_t;
 
     --hardware interface
-    cs_n                  : in  std_logic;
-    sclk                  : in  std_logic;
-    mosi                  : in  std_logic;
-    miso                  : out std_logic;
-    request_more_from_mcu : out std_logic;
+    cs_n : in  std_logic;
+    sclk : in  std_logic;
+    mosi : in  std_logic;
+    miso : out std_logic;
 
     -- internal receive interface
     new_mcu_to_fpga_data : out std_logic;
@@ -44,9 +43,9 @@ architecture rtl of spi_top is
   signal data_fully_latched : std_logic;
   signal header_byte        : std_logic_vector(7 downto 0);
   signal read_out_data      : std_logic_vector(7 downto 0);
-  signal read_out_data_held : std_logic_vector(7 downto 0);
   signal tx_header_byte     : std_logic;
-  signal next_tx_byte       : std_logic_vector(7 downto 0);
+  signal tx_byte            : std_logic_vector(7 downto 0);
+  signal latched_data       : std_logic_vector(7 downto 0);
   signal dequeue            : std_logic;
   signal empty              : std_logic;
 
@@ -66,7 +65,8 @@ begin
       cs_n                     => cs_n,
       sclk                     => sclk,
       miso                     => miso,
-      data                     => next_tx_byte,
+      data                     => tx_byte,
+      latched_data             => latched_data,
       data_tentatively_latched => open,
       data_fully_latched       => data_fully_latched,
       next_byte_index          => next_byte_index);
@@ -93,23 +93,12 @@ begin
 
       contents_count     => contents_count_int,
       data_fully_latched => data_fully_latched,
+      read_out_data      => read_out_data,
+      latched_data       => latched_data,
 
-      tx_header_byte => tx_header_byte,
-      header_byte    => header_byte,
-      dequeue        => dequeue,
-
-      --hardware interface
-      request_more_data => request_more_from_mcu
+      tx_byte => tx_byte,
+      dequeue => dequeue
       );
-
-  select_tx_data : process(read_out_data, tx_header_byte, header_byte, read_out_data_held) is
-  begin
-    if tx_header_byte = '1' then
-      next_tx_byte <= header_byte;
-    else
-      next_tx_byte <= read_out_data_held;
-    end if;
-  end process;
 
   contents_count <= contents_count_int;
 
@@ -125,18 +114,6 @@ begin
       data     => mcu_to_fpga_data_int,
       new_data => new_mcu_to_fpga_data_from_rx);
 
-  reveal_if_ok : process(ctrl.clk) is
-  begin
-    if rising_edge(ctrl.clk) then
-      if ctrl.reset_n = '0' then
-        read_out_data_held <= (others => '0');
-      else
-        if data_fully_latched = '1' then
-          read_out_data_held <= read_out_data;
-        end if;
-      end if;
-    end if;
-  end process;
 
   decode_rx_frame : process(ctrl.clk) is
   begin

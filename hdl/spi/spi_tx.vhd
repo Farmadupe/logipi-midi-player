@@ -21,6 +21,7 @@ entity spi_tx is
 
     -- internal interface
     data                     : in  std_logic_vector(spi_word_length - 1 downto 0);
+    latched_data             : out std_logic_vector(spi_word_length - 1 downto 0);
     data_tentatively_latched : out std_logic;
     data_fully_latched       : out std_logic;
 
@@ -44,12 +45,12 @@ architecture rtl of spi_tx is
   type state_t is (disabled, transmitting);
 
   -- Note the subtraction of 2 is correct. See the comment in process transmit.
-  signal latched_data     : std_logic_vector(spi_word_length - 1 downto 0);
   signal time_to_transmit : std_logic;
 
   constant bit_index_reset : integer := 0;
 
   signal next_byte_index_int : integer range 0 to tx_max_block_size - 1;
+  signal latched_data_int    : std_logic_vector(spi_word_length - 1 downto 0);
 begin
 
   prevent_metastability : process (ctrl.clk) is
@@ -97,11 +98,11 @@ begin
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
-        latched_data <= (others => '0');
+        latched_data_int <= (others => '0');
       else
         if (cs_n_d2 = '1' and cs_n_d1 = '0') or
           (bit_index = 0 and time_to_transmit = '1')then
-          latched_data             <= data;
+          latched_data_int         <= data;
           data_tentatively_latched <= '1';
         else
           data_tentatively_latched <= '0';
@@ -116,7 +117,7 @@ begin
       -- bit_index_reset is one greater than the number of bits in
       -- latched_data, and would thus fail to index. Do not read latched_data
       -- if this is the case.
-      ungated_miso <= latched_data(bit_index);
+      ungated_miso <= latched_data_int(bit_index);
     end if;
   end process;
 
@@ -184,5 +185,5 @@ begin
 
 
   next_byte_index <= next_byte_index_int;
-  
+  latched_data    <= latched_data_int;
 end;

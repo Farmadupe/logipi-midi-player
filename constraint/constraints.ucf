@@ -29,7 +29,6 @@ NET "cs_n"                  LOC="P79" | IOSTANDARD = LVTTL;
 NET "sclk"                  LOC="P70" | IOSTANDARD = LVTTL;
 NET "mosi"                  LOC="P65" | IOSTANDARD = LVTTL;
 NET "miso"                  LOC="P75" | IOSTANDARD = LVTTL;
-NET "request_more_from_mcu" LOC="P81" | IOSTANDARD = LVTTL;
 
 #PWM out!
 #net "audio_output_pin" slew="QUIETIO";
