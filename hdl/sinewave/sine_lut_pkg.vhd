@@ -19,10 +19,14 @@ package sine_lut_pkg is
   -- However since Spartan 6 block RAM can only store data of widths 1, 2, 4, 8,
   -- 16 and 32, no other width makes sense. 8 bits will give poor fidelity and 32
   -- bits will give wasteful fidelity.
-  type sine_lut_arr is array (0 to num_lut_entries - 1) of signed(15 downto 0);
+  constant lut_width : integer := 16;
+  type sine_lut_arr is array (0 to num_lut_entries - 1) of signed(lut_width - 1 downto 0);
+  type proportion_dbg is array (0 to num_lut_entries - 1) of real;
 
   -- Function to produce the constant data needed for the LUT.
   function calc_sine_lut return sine_lut_arr;
+
+--function calc_proportion return proportion_dbg;
 end;
 
 package body sine_lut_pkg is
@@ -33,10 +37,23 @@ package body sine_lut_pkg is
     -- VHDL sine is in radians, so this will count from 0 to pi.
     variable proportion : real;
   begin
-    for i in 0 to num_lut_entries loop
-      proportion := i * (pi / num_lut_entries);
-      ret(i)     := to_signed(sin(proportion), 16);
+    for i in 0 to num_lut_entries - 1 loop
+      proportion := real(i) * (math_2_pi / real(num_lut_entries));
+      ret(i) := to_signed(integer(sin(proportion) *
+                                      real(2**(lut_width - 1))), lut_width);
+
+      -- correct an error where sin(x) = 1 is recorded as sin(x) = -1
+      if i /= 0 then
+        if ret(i) = -(2**(lut_width-1)) and ret(i - 1) > 0 then
+          ret(i) := ret(i - 1);
+        end if;
+      end if;
+      
     end loop;
+
+    return ret;
   end;
+
+
 end;
 

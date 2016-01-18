@@ -32,16 +32,15 @@ architecture behavioural of top_tb is
   signal fpga_to_pi_pin : std_logic;
 
   -- spi signals
-  signal clock                 : std_logic;
-  signal enable                : std_logic;
-  signal mosi                  : std_logic;
-  signal miso                  : std_logic;
-  signal request_more_from_mcu : std_logic;
-  signal light_square_data     : std_logic;
+  signal sclk              : std_logic;
+  signal cs_n              : std_logic;
+  signal mosi              : std_logic;
+  signal miso              : std_logic;
+  signal light_square_data : std_logic;
 
   -- mock spi master signals
-  signal ready        : boolean;
-  signal send         : boolean;
+  signal ready        : boolean                                        := false;
+  signal send         : boolean                                        := false;
   signal master_data  : std_logic_vector(spi_word_length - 1 downto 0) := (others => '0');
   signal force_cs_low : boolean                                        := false;
 
@@ -51,21 +50,33 @@ begin
 
   top_1 : entity virtual_button_lib.top
     port map (
-      clk_50mhz             => clk_50mhz,
-      pb_0                  => pb_0,
-      pb_1                  => pb_1,
-      sw_0                  => sw_0,
-      sw_1                  => sw_1,
-      led_0                 => led_0,
-      led_1                 => led_1,
-      pi_to_fpga_pin        => pi_to_fpga_pin,
-      fpga_to_pi_pin        => fpga_to_pi_pin,
-      sclk                  => clock,
-      cs_n                  => enable,
-      mosi                  => mosi,
-      miso                  => miso,
-      request_more_from_mcu => request_more_from_mcu,
-      light_square_data     => light_square_data);
+      clk_50mhz         => clk_50mhz,
+      pb_0              => pb_0,
+      pb_1              => pb_1,
+      sw_0              => sw_0,
+      sw_1              => sw_1,
+      led_0             => led_0,
+      led_1             => led_1,
+      pi_to_fpga_pin    => pi_to_fpga_pin,
+      fpga_to_pi_pin    => fpga_to_pi_pin,
+      sclk              => sclk,
+      cs_n              => cs_n,
+      mosi              => mosi,
+      miso              => miso,
+      light_square_data => light_square_data);
+
+  mock_spi_master_1 : entity virtual_button_lib.mock_spi_master
+    port map (
+      frequency    => 5_000_000,
+      cpol         => 0,
+      cpha         => 0,
+      send         => send,
+      force_cs_low => force_cs_low,
+      ready        => ready,
+      data         => master_data,
+      cs_n         => cs_n,
+      sclk         => sclk,
+      mosi         => mosi);
 
   -- Clock process definitions
   clk_process : process
@@ -92,8 +103,6 @@ begin
     wait;
   end process;
 
-
-
   mcu_send_proc : process is
     file time_file   : text is in "time.txt";
     file clock_file  : text is in "clock.txt";
@@ -102,7 +111,7 @@ begin
 
     variable time_line, clock_line, enable_line, mosi_line : line;
 
-    variable next_time                    : time;
+    variable next_time                          : time;
     variable next_clock, next_enable, next_mosi : character;
 
     variable success : boolean;
