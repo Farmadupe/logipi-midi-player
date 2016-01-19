@@ -44,8 +44,12 @@ architecture behavioural of top_tb is
   signal master_data  : std_logic_vector(spi_word_length - 1 downto 0) := (others => '0');
   signal force_cs_low : boolean                                        := false;
 
-
   signal mcu_to_fpga_data : std_logic_vector(spi_word_length - 1 downto 0);
+
+  signal tb_ctrl   : ctrl_t;
+  signal tb_rx_wip : std_logic_vector(7 downto 0);
+  signal tb_rx     : std_logic_vector(7 downto 0);
+  signal new_tb_rx : std_logic;
 begin
 
   top_1 : entity virtual_button_lib.top
@@ -65,24 +69,45 @@ begin
       miso              => miso,
       light_square_data => light_square_data);
 
-  mock_spi_master_1 : entity virtual_button_lib.mock_spi_master
+  tb_ctrl.clk     <= clk_50mhz;
+  tb_ctrl.reset_n <= '1';
+
+  spi_rx_1 : entity virtual_button_lib.spi_rx
+    generic map (
+      cpol => 0,
+      cpha => 0)
     port map (
-      frequency    => 5_000_000,
-      cpol         => 0,
-      cpha         => 0,
-      send         => send,
-      force_cs_low => force_cs_low,
-      ready        => ready,
-      data         => master_data,
-      cs_n         => cs_n,
-      sclk         => sclk,
-      mosi         => mosi);
+      ctrl     => tb_ctrl,
+      sclk     => sclk,
+      cs_n     => cs_n,
+      mosi     => miso,
+      data     => tb_rx_wip,
+      new_data => new_tb_rx);
+
+  update_tb_rx : process(new_tb_rx) is
+  begin
+    if rising_edge(new_tb_rx) then
+      tb_rx <= tb_rx_wip;
+    end if;
+  end process;
+
+  --mock_spi_master_1 : entity virtual_button_lib.mock_spi_master
+  --  port map (
+  --    frequency    => 5_000_000,
+  --    cpol         => 0,
+  --    cpha         => 0,
+  --    send         => send,
+  --    force_cs_low => force_cs_low,
+  --    ready        => ready,
+  --    data         => master_data,
+  --    cs_n         => cs_n,
+  --    sclk         => sclk,
+  --    mosi         => mosi);
 
   -- Clock process definitions
   clk_process : process
     constant clk_period_50 : time := 1 sec / 50_000_000;
   begin
-    wait for 100 us;
 
     loop
       clk_50mhz <= '0';
@@ -103,11 +128,17 @@ begin
     wait;
   end process;
 
+  uart_things : process is
+  begin
+    uart_send(std_logic_vector(to_unsigned(character'pos('e'), 8)), 9600, pi_to_fpga_pin);
+    wait;
+  end process;
+
   mcu_send_proc : process is
-    file time_file   : text is in "time.txt";
-    file clock_file  : text is in "clock.txt";
-    file enable_file : text is in "enable.txt";
-    file mosi_file   : text is in "mosi.txt";
+    file time_file   : text;
+    file clock_file  : text;
+    file enable_file : text;
+    file mosi_file   : text;
 
     variable time_line, clock_line, enable_line, mosi_line : line;
 
@@ -115,58 +146,75 @@ begin
     variable next_clock, next_enable, next_mosi : character;
 
     variable success : boolean;
+
+    variable current_loop_start : time := 0 sec;
   begin
 
-    while not endfile(time_file) loop
-      readline(time_file, time_line);
-      read(time_line, next_time, success);
+    loop
+      file_open(time_file, "tb/times.txt", read_mode);
+      file_open(clock_file, "tb/clock.txt", read_mode);
+      file_open(enable_file, "tb/enable.txt", read_mode);
+      file_open(mosi_file, "tb/mosi.txt", read_mode);
 
-      if not success then
-        report "invalid time" severity error;
-      end if;
+      while not endfile(time_file) loop
+        readline(time_file, time_line);
+        read(time_line, next_time, success);
 
-      readline(clock_file, clock_line);
-      read(clock_line, next_clock, success);
-      if not success then
-        report "invalid clock" severity error;
-      end if;
+        if not success then
+          report "invalid time" severity error;
+        end if;
 
-      readline(enable_file, enable_line);
-      read(enable_line, next_enable, success);
-      if not success then
-        report "invalid enable" severity error;
-      end if;
+        readline(clock_file, clock_line);
+        read(clock_line, next_clock, success);
+        if not success then
+          report "invalid clock" severity error;
+        end if;
 
-      readline(mosi_file, mosi_line);
-      read(mosi_line, next_mosi, success);
-      if not success then
-        report "invalid enable" severity error;
-      end if;
+        readline(enable_file, enable_line);
+        read(enable_line, next_enable, success);
+        if not success then
+          report "invalid enable" severity error;
+        end if;
+
+        readline(mosi_file, mosi_line);
+        read(mosi_line, next_mosi, success);
+        if not success then
+          report "invalid enable" severity error;
+        end if;
 
 
-      if now < next_time then
-        wait for next_time - now;
-      end if;
+        if now < (next_time + current_loop_start) then
+          wait for (next_time + current_loop_start) - now;
+        end if;
 
-      if next_clock = '1' then
-        clock <= '1';
-      else
-        clock <= '0';
-      end if;
+        if next_clock = '1' then
+          sclk <= '1';
+        else
+          sclk <= '0';
+        end if;
 
-      if next_enable = '1' then
-        enable <= '1';
-      else
-        enable <= '0';
-      end if;
+        if next_enable = '1' then
+          cs_n <= '1';
+        else
+          cs_n <= '0';
+        end if;
 
-      if next_mosi = '1' then
-        mosi <= '1';
-      else
-        mosi <= '0';
-      end if;
-      
+        if next_mosi = '1' then
+          mosi <= '1';
+        else
+          mosi <= '0';
+        end if;
+        
+      end loop;
+
+      file_close(time_file);
+      file_close(clock_file);
+      file_close(enable_file);
+      file_close(mosi_file);
+
+      current_loop_start := now;
     end loop;
+
 
     wait;
   end process;

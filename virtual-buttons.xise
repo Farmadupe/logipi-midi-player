@@ -16,7 +16,7 @@
 
   <files>
     <file xil_pn:name="hdl/top.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="27"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="26"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="25"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
@@ -113,7 +113,7 @@
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="tb/spi/mock_spi_master.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="26"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="87"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="87"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="87"/>
@@ -149,7 +149,7 @@
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="tb/top_tb.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="28"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="27"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="94"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="94"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="94"/>

@@ -16,11 +16,11 @@ entity debug_light_generator is
   port(
     ctrl : in ctrl_t;
 
-    spi_tx_buffer_full    : in std_logic;
-    contents_count        : in integer range 0 to spi_tx_ram_depth;
-    buttons               : in button_arr;
-    spi_next_byte_index   : in integer range 0 to spi_tx_max_block_size - 1;
-    enable_spi_tx         : in std_logic;
+    spi_tx_buffer_full  : in std_logic;
+    contents_count      : in integer range 0 to spi_tx_ram_depth;
+    buttons             : in button_arr;
+    spi_next_byte_index : in integer range 0 to spi_tx_max_block_size - 1;
+    enable_spi_tx       : in std_logic;
 
     light_square_data : out std_logic
     );
@@ -67,22 +67,17 @@ begin
 
       -- check that spi transmitter is working by lighting a different light
       -- for each byte being transmitted ina message.
-      if buttons(s).toggle = '1' then
-        ws2812_data(6) <= ws2812_pink;
-
-        if spi_next_byte_index = 0 then
-          ws2812_data(7) <= ws2812_clear;
-        elsif spi_next_byte_index < spi_tx_max_block_size / 3 then
-          ws2812_data(7) <= ws2812_green;
-        elsif spi_next_byte_index < 2 * (spi_tx_max_block_size / 3) then
-          ws2812_data(7) <= ws2812_red;
-        else
-          ws2812_data(7) <= ws2812_blue;
-        end if;
-        
+      if spi_next_byte_index = 0 then
+        ws2812_data(7) <= ws2812_clear;
+      elsif spi_next_byte_index < spi_tx_max_block_size / 3 then
+        ws2812_data(7) <= ws2812_green;
+      elsif spi_next_byte_index < 2 * (spi_tx_max_block_size / 3) then
+        ws2812_data(7) <= ws2812_red;
       else
-        ws2812_data(6 to 7) <= (others => ws2812_clear);
+        ws2812_data(7) <= ws2812_blue;
       end if;
+
+
 
       -- debug spi transmitter
       if held_spi_tx_buffer_full = '1' then

@@ -7,11 +7,13 @@ use virtual_button_lib.midi_pkg.all;
 use virtual_button_lib.constants.all;
 use virtual_button_lib.utils.all;
 use virtual_button_lib.sine_lut_pkg.all;
+use virtual_button_lib.button_pkg.all;
 
 entity temp_midi_note_player is
   port(
     ctrl        : in  ctrl_t;
     midi_no     : in  midi_note_t;
+    buttons     : in  button_arr;
     pcm_out     : out signed(15 downto 0);
     new_pcm_out : out std_logic
     );
@@ -34,9 +36,10 @@ architecture rtl of temp_midi_note_player is
   signal audio_freq_counter_done  : std_logic;
 
   -- other internals
-  signal sine_driver_counter      : integer range 0 to 2**midi_counter_width;
+  signal sine_driver_counter : integer range 0 to 2**midi_counter_width;
 
-  --constant proportions : proportion_dbg := calc_proportion;
+  signal next_value : integer;
+
 begin
 
   sine_rom_1 : entity work.sine_rom
@@ -45,6 +48,7 @@ begin
       read_address => sine_read_address,
       read_out     => pcm_out
       );
+
 
   do_audio_freq : process(ctrl.clk) is
   begin
@@ -60,18 +64,20 @@ begin
   end process;
 
   sine_driver : process(ctrl.clk) is
-    variable next_value : integer;
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
-        sine_driver_counter      <= 0;
+        sine_driver_counter <= 0;
       else
-        if audio_freq_counter_done = '1' then
-          next_value := sine_driver_counter + strides(midi_no);
-          if next_value <= 2**midi_counter_width then
-            sine_driver_counter      <= next_value;
-          else
-            sine_driver_counter      <= 0;
+        if not buttons(e).toggle = '1' then
+          sine_driver_counter <= 0;
+        else
+          if audio_freq_counter_done = '1' then
+            if sine_driver_counter + strides(midi_no) <= 2**midi_counter_width then
+              sine_driver_counter <= sine_driver_counter + strides(midi_no);
+            else
+              sine_driver_counter <= 0;
+            end if;
           end if;
         end if;
       end if;
@@ -81,5 +87,5 @@ begin
   -- todo Make this prettier
   sine_read_address <= sine_driver_counter / (2**6);
 
-  new_pcm_out <= audio_freq_counter_done;
+  new_pcm_out <= audio_freq_counter_done and buttons(e).toggle;
 end;

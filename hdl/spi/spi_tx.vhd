@@ -51,6 +51,10 @@ architecture rtl of spi_tx is
 
   signal next_byte_index_int : integer range 0 to tx_max_block_size - 1;
   signal latched_data_int    : std_logic_vector(spi_word_length - 1 downto 0);
+
+  signal data_fully_latched_int : std_logic;
+  signal data_tentatively_latched_int : std_logic;
+  signal has_been_fully_latched : std_logic;
 begin
 
   prevent_metastability : process (ctrl.clk) is
@@ -100,12 +104,13 @@ begin
       if ctrl.reset_n = '0' then
         latched_data_int <= (others => '0');
       else
-        if (cs_n_d2 = '1' and cs_n_d1 = '0') or
-          (bit_index = 0 and time_to_transmit = '1')then
+        if (cs_n_d2 = '1' and cs_n_d1 = '0' and has_been_fully_latched = '1') or
+          (time_to_transmit = '1' and
+           has_been_fully_latched = '1' and bit_index = 0)then
           latched_data_int         <= data;
-          data_tentatively_latched <= '1';
+          data_tentatively_latched_int <= '1';
         else
-          data_tentatively_latched <= '0';
+          data_tentatively_latched_int <= '0';
         end if;
       end if;
     end if;
@@ -172,18 +177,26 @@ begin
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
-        data_fully_latched <= '0';
+        data_fully_latched_int <= '0';
       else
         if bit_index < 5 and bit_index /= 0 then
-          data_fully_latched <= '1';
+          data_fully_latched_int <= '1';
         else
-          data_fully_latched <= '0';
+          data_fully_latched_int <= '0';
+        end if;
+
+        if data_fully_latched_int = '1' then
+          has_been_fully_latched <=  '1';
+        elsif  data_tentatively_latched_int = '1' then
+          has_been_fully_latched <= '0';
         end if;
       end if;
     end if;
   end process;
 
 
+  data_fully_latched <= data_fully_latched_int;
+  data_tentatively_latched <= data_tentatively_latched_int;
   next_byte_index <= next_byte_index_int;
   latched_data    <= latched_data_int;
 end;

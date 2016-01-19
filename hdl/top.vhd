@@ -53,7 +53,7 @@ architecture rtl of top is
 
   -- each spartan 6 RAMB8BWER is 1024 bits long. There is no point in reducing
   -- this number to less than 1024.
-  constant spi_tx_ram_depth : integer := 4096;
+  constant spi_tx_ram_depth : integer := 512;
 
   signal spi_new_mcu_to_fpga_data     : std_logic;
   signal spi_mcu_to_fpga_data         : std_logic_vector(spi_word_length - 1 downto 0);
@@ -104,11 +104,11 @@ begin
       cpol              => 0,
       cpha              => 0)
     port map (
-      ctrl                  => ctrl,
-      cs_n                  => cs_n,
-      sclk                  => sclk,
-      mosi                  => mosi,
-      miso                  => miso,
+      ctrl => ctrl,
+      cs_n => cs_n,
+      sclk => sclk,
+      mosi => mosi,
+      miso => miso,
 
       new_mcu_to_fpga_data => spi_new_mcu_to_fpga_data,
       mcu_to_fpga_data     => spi_mcu_to_fpga_data,
@@ -128,10 +128,11 @@ begin
     port map (
       ctrl        => ctrl,
       midi_no     => 69,
+      buttons     => buttons,
       pcm_out     => pcm_out,
       new_pcm_out => new_pcm_out);
 
-  spi_enqueue_fpga_to_mcu_data <= new_pcm_out and enable_spi_tx;
+  spi_enqueue_fpga_to_mcu_data <= new_pcm_out;
 
 
   debug_light_generator_1 : entity virtual_button_lib.debug_light_generator
@@ -140,12 +141,12 @@ begin
       spi_tx_ram_depth      => spi_tx_ram_depth
       )
     port map (
-      ctrl                  => ctrl,
-      spi_tx_buffer_full    => spi_tx_buffer_full,
-      contents_count        => spi_contents_count,
-      buttons               => buttons,
-      spi_next_byte_index   => spi_next_byte_index,
-      enable_spi_tx         => enable_spi_tx,
+      ctrl                => ctrl,
+      spi_tx_buffer_full  => spi_tx_buffer_full,
+      contents_count      => spi_contents_count,
+      buttons             => buttons,
+      spi_next_byte_index => spi_next_byte_index,
+      enable_spi_tx       => enable_spi_tx,
 
       light_square_data => light_square_data
       );
@@ -181,7 +182,7 @@ begin
 
 
   -- Enable/disable spi data transmission.
-  enable_spi_tx <= '1';--buttons(e).toggle;
+  enable_spi_tx <= '1';
 
   led_1 <= '0';
 

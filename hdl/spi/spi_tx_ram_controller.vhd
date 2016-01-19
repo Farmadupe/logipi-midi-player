@@ -53,7 +53,7 @@ begin
         case state is
           when tx_header =>
 
-            if latched_data = header_byte and data_fully_latched_re = '1' then
+            if latched_data = header_byte and latched_data /= "00000000" and data_fully_latched_re = '1' then
               state <= load_header_byte;
             end if;
 
