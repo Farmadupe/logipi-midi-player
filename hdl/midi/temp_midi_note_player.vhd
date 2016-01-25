@@ -1,6 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.math_real.all;
 
 library virtual_button_lib;
 use virtual_button_lib.midi_pkg.all;
@@ -24,6 +25,7 @@ end;
 architecture rtl of temp_midi_note_player is
 
   constant strides : stride_arr_t := calc_strides;
+  constant period : period_arr_t := calc_periods_in_current_note;
 
   -- sine signals
   signal sine_read_address : integer range 0 to num_lut_entries;
@@ -36,7 +38,7 @@ architecture rtl of temp_midi_note_player is
   signal audio_freq_counter_done  : std_logic;
 
   -- other internals
-  signal sine_driver_counter : integer range 0 to 2**midi_counter_width;
+  signal sine_driver_counter : unsigned (midi_counter_width - 1 downto 0);
 
   signal next_value : integer;
 
@@ -67,17 +69,13 @@ begin
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
-        sine_driver_counter <= 0;
+        sine_driver_counter <= (others =>  '0');
       else
         if not buttons(e).toggle = '1' then
-          sine_driver_counter <= 0;
+          sine_driver_counter <= (others => '0');
         else
           if audio_freq_counter_done = '1' then
-            if sine_driver_counter + strides(midi_no) <= 2**midi_counter_width then
-              sine_driver_counter <= sine_driver_counter + strides(midi_no);
-            else
-              sine_driver_counter <= 0;
-            end if;
+            sine_driver_counter <= sine_driver_counter + strides(midi_no);
           end if;
         end if;
       end if;
@@ -85,7 +83,7 @@ begin
   end process;
 
   -- todo Make this prettier
-  sine_read_address <= sine_driver_counter / (2**6);
+  sine_read_address <= to_integer(sine_driver_counter) / (2**(midi_counter_width - integer(log2(real(num_lut_entries)))));
 
   new_pcm_out <= audio_freq_counter_done and buttons(e).toggle;
 end;

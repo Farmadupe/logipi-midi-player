@@ -40,6 +40,7 @@ architecture rtl of spi_tx_ram_controller is
 
   type state_t is (tx_header, tx_data, load_header_byte);
   signal state : state_t;
+
 begin
 
   fsm_nextstate : process(ctrl.clk) is
@@ -53,7 +54,7 @@ begin
         case state is
           when tx_header =>
 
-            if latched_data = header_byte and latched_data /= "00000000" and data_fully_latched_re = '1' then
+            if  latched_data /= "00000000" and data_fully_latched_re = '1' then
               state <= load_header_byte;
             end if;
 
@@ -79,7 +80,7 @@ begin
           tx_byte <= header_byte;
 
         when load_header_byte =>
-          remaining_bytes_this_msg <= to_integer(unsigned(header_byte));
+          remaining_bytes_this_msg <= to_integer(unsigned(latched_data));
 
           
         when tx_data =>

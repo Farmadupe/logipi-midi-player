@@ -50,9 +50,17 @@ architecture behavioural of top_tb is
   signal tb_rx_wip : std_logic_vector(7 downto 0);
   signal tb_rx     : std_logic_vector(7 downto 0);
   signal new_tb_rx : std_logic;
+
+  signal next_time_sig                                  : time;
+  signal next_enable_sig, next_clock_sig, next_mosi_sig : character;
+
+  signal remaining_bytes : integer := 0;
+  signal current_rx      : std_logic_vector(7 downto 0);
+  signal last_rx         : std_logic_vector(7 downto 0);
 begin
 
-  top_1 : entity virtual_button_lib.top
+--  top_1 : entity virtual_button_lib.top
+    top_1 : entity virtual_button_lib.top_timesim
     port map (
       clk_50mhz         => clk_50mhz,
       pb_0              => pb_0,
@@ -134,6 +142,24 @@ begin
     wait;
   end process;
 
+  decode_tb_rx : process(new_tb_rx) is
+  begin
+    if rising_edge(new_tb_rx) then
+      if remaining_bytes = 0 then
+        remaining_bytes <= to_integer(unsigned(tb_rx));
+      else
+        remaining_bytes <= remaining_bytes - 1;
+
+        if last_rx = tb_rx and to_integer(signed(tb_rx)) /= 127 and to_integer(signed(tb_rx)) /= -128 then
+          report "last_rx and tb_rx are the same" & integer'image(to_integer(signed(tb_rx))) severity failure;
+        end if;
+
+        last_rx    <= current_rx;
+        current_rx <= tb_rx;
+      end if;
+    end if;
+  end process;
+
   mcu_send_proc : process is
     file time_file   : text;
     file clock_file  : text;
@@ -151,36 +177,39 @@ begin
   begin
 
     loop
-      file_open(time_file, "tb/times.txt", read_mode);
-      file_open(clock_file, "tb/clock.txt", read_mode);
-      file_open(enable_file, "tb/enable.txt", read_mode);
-      file_open(mosi_file, "tb/mosi.txt", read_mode);
+      file_open(time_file, "tb/time.txt", read_mode);
+      file_open(clock_file, "tb/CLOCK.txt", read_mode);
+      file_open(enable_file, "tb/ENABLE.txt", read_mode);
+      file_open(mosi_file, "tb/MOSI.txt", read_mode);
 
       while not endfile(time_file) loop
         readline(time_file, time_line);
         read(time_line, next_time, success);
-
         if not success then
           report "invalid time" severity error;
         end if;
+        next_time_sig <= next_time;
 
         readline(clock_file, clock_line);
         read(clock_line, next_clock, success);
         if not success then
           report "invalid clock" severity error;
         end if;
+        next_clock_sig <= next_clock;
 
         readline(enable_file, enable_line);
         read(enable_line, next_enable, success);
         if not success then
           report "invalid enable" severity error;
         end if;
+        next_enable_sig <= next_enable;
 
         readline(mosi_file, mosi_line);
         read(mosi_line, next_mosi, success);
         if not success then
           report "invalid enable" severity error;
         end if;
+        next_mosi_sig <= next_mosi;
 
 
         if now < (next_time + current_loop_start) then

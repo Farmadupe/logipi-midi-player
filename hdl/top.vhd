@@ -7,7 +7,7 @@ use virtual_button_lib.utils.all;
 use virtual_button_lib.constants.all;
 use virtual_button_lib.button_pkg.all;
 use virtual_button_lib.sine_lut_pkg.all;
---use virtual_button_lib.midi_pkg.all;
+use virtual_button_lib.midi_pkg.all;
 
 entity top is
   port(
@@ -53,7 +53,7 @@ architecture rtl of top is
 
   -- each spartan 6 RAMB8BWER is 1024 bits long. There is no point in reducing
   -- this number to less than 1024.
-  constant spi_tx_ram_depth : integer := 512;
+  constant spi_tx_ram_depth : integer := 4096;
 
   signal spi_new_mcu_to_fpga_data     : std_logic;
   signal spi_mcu_to_fpga_data         : std_logic_vector(spi_word_length - 1 downto 0);
@@ -70,6 +70,7 @@ architecture rtl of top is
   signal new_pcm_out : std_logic;
 
 
+  signal midi_no : midi_note_t;
 begin
 
   --clock_multiplier_1 : entity virtual_button_lib.clock_multiplier
@@ -124,10 +125,25 @@ begin
 
   spi_fpga_to_mcu_data <= std_logic_vector(pcm_out(15 downto 8));
 
+  choose_midi_no : process(ctrl.clk) is
+  begin
+    if rising_edge(ctrl.clk) then
+      if ctrl.reset_n = '0' then
+        midi_no <= 69;
+      else
+        if midi_no < midi_note_t'high and buttons(u).pressed = '1' then
+          midi_no <= midi_no + 1;
+        elsif midi_no > midi_note_t'low and buttons(j).pressed = '1' then
+          midi_no <= midi_no - 1;
+        end if;
+      end if;
+    end if;
+  end process;
+
   temp_midi_note_player_1 : entity work.temp_midi_note_player
     port map (
       ctrl        => ctrl,
-      midi_no     => 69,
+      midi_no     => midi_no,
       buttons     => buttons,
       pcm_out     => pcm_out,
       new_pcm_out => new_pcm_out);

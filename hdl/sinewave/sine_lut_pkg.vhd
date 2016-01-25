@@ -7,7 +7,7 @@ package sine_lut_pkg is
 
   --This sine lut will go into block ram. For whatever number of brams are used
   --to hold the sine lut, we will aim to fill them all the way up.
-  constant num_luts : integer := 4;
+  constant num_luts : integer := 8;
 
   --Each bram is 1024 entries long.
   constant num_lut_entries : integer := num_luts * 1024;
