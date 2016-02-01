@@ -59,8 +59,7 @@ architecture behavioural of top_tb is
   signal last_rx         : std_logic_vector(7 downto 0);
 begin
 
---  top_1 : entity virtual_button_lib.top
-    top_1 : entity virtual_button_lib.top_timesim
+  top_1 : entity virtual_button_lib.top
     port map (
       clk_50mhz         => clk_50mhz,
       pb_0              => pb_0,
@@ -151,7 +150,7 @@ begin
         remaining_bytes <= remaining_bytes - 1;
 
         if last_rx = tb_rx and to_integer(signed(tb_rx)) /= 127 and to_integer(signed(tb_rx)) /= -128 then
-          report "last_rx and tb_rx are the same" & integer'image(to_integer(signed(tb_rx))) severity failure;
+          --report "last_rx and tb_rx are the same" & integer'image(to_integer(signed(tb_rx))) severity failure;
         end if;
 
         last_rx    <= current_rx;
@@ -175,6 +174,8 @@ begin
 
     variable current_loop_start : time := 0 sec;
   begin
+
+    wait for 1 ms;
 
     loop
       file_open(time_file, "tb/time.txt", read_mode);

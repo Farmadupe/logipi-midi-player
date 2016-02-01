@@ -8,10 +8,11 @@ library virtual_button_lib;
 use virtual_button_lib.utils.all;
 use virtual_button_lib.constants.all;
 
-entity byte_ram is
+entity ram is
   
   generic(
-    depth : integer
+    depth : integer;
+    width : integer
     );
 
   port(
@@ -20,16 +21,16 @@ entity byte_ram is
     read_addr       : in  unsigned(integer(ceil(log2(real(depth)))) -1 downto 0);
     next_write_addr : in  unsigned(integer(ceil(log2(real(depth)))) -1 downto 0);
     write_enable    : in  std_logic;
-    write_in        : in  std_logic_vector(7 downto 0);
-    read_out        : out std_logic_vector(7 downto 0)
+    write_in        : in  std_logic_vector(width - 1 downto 0);
+    read_out        : out std_logic_vector(width - 1 downto 0)
     );
 
 end;
 
 --synthesize a dual port block ram
-architecture rtl of byte_ram is
+architecture rtl of ram is
 
-  type ram_type is array (0 to depth - 1) of std_logic_vector (7 downto 0);
+  type ram_type is array (0 to depth - 1) of std_logic_vector (width - 1 downto 0);
 
 
   -- This signal is preinitialized as zeroes to remove simulation warnings..

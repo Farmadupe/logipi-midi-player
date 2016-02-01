@@ -16,11 +16,13 @@ entity debug_light_generator is
   port(
     ctrl : in ctrl_t;
 
-    spi_tx_buffer_full  : in std_logic;
-    contents_count      : in integer range 0 to spi_tx_ram_depth;
-    buttons             : in button_arr;
-    spi_next_byte_index : in integer range 0 to spi_tx_max_block_size - 1;
-    enable_spi_tx       : in std_logic;
+    spi_tx_buffer_full : in std_logic;
+    contents_count     : in integer range 0 to spi_tx_ram_depth;
+    buttons            : in button_arr;
+    cs_n               : in std_logic;
+    enable_spi_tx      : in std_logic;
+    mosi               : in std_logic;
+    miso               : in std_logic;
 
     light_square_data : out std_logic
     );
@@ -65,16 +67,16 @@ begin
         ws2812_data(0) <= ws2812_blue;
       end if;
 
-      -- check that spi transmitter is working by lighting a different light
-      -- for each byte being transmitted ina message.
-      if spi_next_byte_index = 0 then
-        ws2812_data(7) <= ws2812_clear;
-      elsif spi_next_byte_index < spi_tx_max_block_size / 3 then
-        ws2812_data(7) <= ws2812_green;
-      elsif spi_next_byte_index < 2 * (spi_tx_max_block_size / 3) then
-        ws2812_data(7) <= ws2812_red;
-      else
+      if mosi = '1' and miso = '1' then
         ws2812_data(7) <= ws2812_blue;
+      elsif miso = '1' then
+        ws2812_data(7) <= ws2812_purple;
+      elsif mosi = '1' then
+        ws2812_data(7) <= ws2812_green;
+      elsif cs_n = '0' then
+        ws2812_data(7) <= ws2812_green;
+      else
+        ws2812_data(7) <= ws2812_clear;
       end if;
 
 

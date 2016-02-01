@@ -28,13 +28,12 @@ entity spi_top is
 
     -- internal tx interface
     enqueue_fpga_to_mcu_data : in std_logic;
-    fpga_to_mcu_data         : in std_logic_vector(spi_word_length - 1 downto 0);
+    fpga_to_mcu_data         : in std_logic_vector(15 downto 0);
 
 
     -- debug from transmitter
-    next_byte_index : out integer range 0 to tx_max_block_size - 1;
-    full            : out std_logic;
-    contents_count  : out integer range 0 to tx_ram_depth
+    full           : out std_logic;
+    contents_count : out integer range 0 to tx_ram_depth
     );
 end spi_top;
 
@@ -42,7 +41,7 @@ architecture rtl of spi_top is
   --signal data_tentatively_latched : std_logic;
   signal data_fully_latched : std_logic;
   signal header_byte        : std_logic_vector(7 downto 0);
-  signal read_out_data      : std_logic_vector(7 downto 0);
+  signal next_tx_word       : std_logic_vector(15 downto 0);
   signal tx_header_byte     : std_logic;
   signal tx_byte            : std_logic_vector(7 downto 0);
   signal latched_data       : std_logic_vector(7 downto 0);
@@ -61,15 +60,13 @@ begin
       cpha              => cpha,
       tx_max_block_size => tx_max_block_size)
     port map (
-      ctrl                     => ctrl,
-      cs_n                     => cs_n,
-      sclk                     => sclk,
-      miso                     => miso,
-      data                     => tx_byte,
-      latched_data             => latched_data,
-      data_tentatively_latched => open,
-      data_fully_latched       => data_fully_latched,
-      next_byte_index          => next_byte_index);
+      ctrl               => ctrl,
+      cs_n               => cs_n,
+      sclk               => sclk,
+      miso               => miso,
+      data               => tx_byte,
+      latched_data       => latched_data,
+      data_fully_latched => data_fully_latched);
 
   tx_fifo : entity work.circular_queue
     generic map(
@@ -79,8 +76,8 @@ begin
       ctrl           => ctrl,
       enqueue        => enqueue_fpga_to_mcu_data,
       dequeue        => dequeue,
-      write_in_data  => fpga_to_mcu_data,
-      read_out_data  => read_out_data,
+      write_in_data  => std_logic_vector(fpga_to_mcu_data),
+      read_out_data  => next_tx_word,
       empty          => empty,
       full           => full,
       contents_count => contents_count_int);
@@ -93,7 +90,7 @@ begin
 
       contents_count     => contents_count_int,
       data_fully_latched => data_fully_latched,
-      read_out_data      => read_out_data,
+      next_tx_word       => next_tx_word,
       latched_data       => latched_data,
 
       tx_byte => tx_byte,

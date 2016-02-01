@@ -17,8 +17,8 @@ entity circular_queue is
 
     enqueue        : in  std_logic;
     dequeue        : in  std_logic;
-    write_in_data  : in  std_logic_vector(7 downto 0);
-    read_out_data  : out std_logic_vector(7 downto 0);
+    write_in_data  : in  std_logic_vector(15 downto 0);
+    read_out_data  : out std_logic_vector(15 downto 0);
     empty          : out std_logic;
     full           : out std_logic;
     contents_count : out natural range 0 to queue_depth
@@ -40,9 +40,10 @@ architecture rtl of circular_queue is
   signal contents_count_int : natural range 0 to queue_depth;
 
 begin
-  ram_1 : entity virtual_button_lib.byte_ram
+  ram_1 : entity virtual_button_lib.ram
     generic map(
-      depth => queue_depth
+      depth => queue_depth,
+      width => 16
       )
     port map (
       ctrl            => ctrl,

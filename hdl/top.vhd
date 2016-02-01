@@ -49,7 +49,8 @@ architecture rtl of top is
   signal buttons : button_arr;
 
   -- spi signals
-  constant spi_tx_max_block_size : integer := 200;
+  constant spi_tx_max_block_size : integer := 2;
+  signal miso_int : std_logic;
 
   -- each spartan 6 RAMB8BWER is 1024 bits long. There is no point in reducing
   -- this number to less than 1024.
@@ -57,9 +58,8 @@ architecture rtl of top is
 
   signal spi_new_mcu_to_fpga_data     : std_logic;
   signal spi_mcu_to_fpga_data         : std_logic_vector(spi_word_length - 1 downto 0);
-  signal spi_fpga_to_mcu_data         : std_logic_vector(spi_word_length - 1 downto 0);
+  signal spi_fpga_to_mcu_data         : std_logic_vector(15 downto 0);
   signal spi_enqueue_fpga_to_mcu_data : std_logic;
-  signal spi_next_byte_index          : integer range 0 to spi_tx_max_block_size - 1;
   signal spi_contents_count           : integer range 0 to spi_tx_ram_depth;
   signal spi_tx_buffer_full           : std_logic;
 
@@ -109,7 +109,7 @@ begin
       cs_n => cs_n,
       sclk => sclk,
       mosi => mosi,
-      miso => miso,
+      miso => miso_int,
 
       new_mcu_to_fpga_data => spi_new_mcu_to_fpga_data,
       mcu_to_fpga_data     => spi_mcu_to_fpga_data,
@@ -118,12 +118,11 @@ begin
       enqueue_fpga_to_mcu_data => spi_enqueue_fpga_to_mcu_data,
       fpga_to_mcu_data         => spi_fpga_to_mcu_data,
 
-      next_byte_index => spi_next_byte_index,
-      full            => spi_tx_buffer_full,
-      contents_count  => spi_contents_count
+      full           => spi_tx_buffer_full,
+      contents_count => spi_contents_count
       );
 
-  spi_fpga_to_mcu_data <= std_logic_vector(pcm_out(15 downto 8));
+  spi_fpga_to_mcu_data <= std_logic_vector(pcm_out);
 
   choose_midi_no : process(ctrl.clk) is
   begin
@@ -157,12 +156,14 @@ begin
       spi_tx_ram_depth      => spi_tx_ram_depth
       )
     port map (
-      ctrl                => ctrl,
-      spi_tx_buffer_full  => spi_tx_buffer_full,
-      contents_count      => spi_contents_count,
-      buttons             => buttons,
-      spi_next_byte_index => spi_next_byte_index,
-      enable_spi_tx       => enable_spi_tx,
+      ctrl               => ctrl,
+      spi_tx_buffer_full => spi_tx_buffer_full,
+      contents_count     => spi_contents_count,
+      buttons            => buttons,
+      cs_n               => cs_n,
+      enable_spi_tx      => enable_spi_tx,
+      mosi               => mosi,
+      miso               => miso_int,
 
       light_square_data => light_square_data
       );
@@ -201,6 +202,8 @@ begin
   enable_spi_tx <= '1';
 
   led_1 <= '0';
+
+  miso <= miso_int;
 
 
 end rtl;

@@ -22,11 +22,7 @@ entity spi_tx is
     -- internal interface
     data                     : in  std_logic_vector(spi_word_length - 1 downto 0);
     latched_data             : out std_logic_vector(spi_word_length - 1 downto 0);
-    data_tentatively_latched : out std_logic;
-    data_fully_latched       : out std_logic;
-
-    -- debug out
-    next_byte_index : out integer range 0 to tx_max_block_size - 1
+    data_fully_latched       : out std_logic
     );
 end;
 
@@ -49,11 +45,10 @@ architecture rtl of spi_tx is
 
   constant bit_index_reset : integer := 0;
 
-  signal next_byte_index_int : integer range 0 to tx_max_block_size - 1;
   signal latched_data_int    : std_logic_vector(spi_word_length - 1 downto 0);
 
   signal data_fully_latched_int : std_logic;
-  signal data_tentatively_latched_int : std_logic;
+  signal data_tentatively_latched : std_logic;
   signal has_been_fully_latched : std_logic;
 begin
 
@@ -108,9 +103,9 @@ begin
           (time_to_transmit = '1' and
            has_been_fully_latched = '1' and bit_index = 0)then
           latched_data_int         <= data;
-          data_tentatively_latched_int <= '1';
+          data_tentatively_latched <= '1';
         else
-          data_tentatively_latched_int <= '0';
+          data_tentatively_latched <= '0';
         end if;
       end if;
     end if;
@@ -130,17 +125,8 @@ begin
     procedure reset_indices is
     begin
       bit_index           <= 0;
-      next_byte_index_int <= 0;
     end;
 
-    procedure increment_byte_index is
-    begin
-      if next_byte_index_int = tx_max_block_size - 1 then
-        next_byte_index_int <= 0;
-      else
-        next_byte_index_int <= next_byte_index_int + 1;
-      end if;
-    end;
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
@@ -154,7 +140,6 @@ begin
         elsif time_to_transmit = '1' then
           if bit_index = 0 then
             bit_index <= 7;
-            increment_byte_index;
           else
             bit_index <= bit_index - 1;
           end if;
@@ -173,7 +158,10 @@ begin
     end if;
   end process;
 
-  gen_second_byte_sent : process(ctrl.clk)
+  --This process exists to get around problems where the fpga attempted to send
+  --the next byte during the back porch. Since the back porch isn't actually
+  --the start of a new byte, that byte never got sent.
+  gen_second_bit_sent : process(ctrl.clk)
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
@@ -187,7 +175,7 @@ begin
 
         if data_fully_latched_int = '1' then
           has_been_fully_latched <=  '1';
-        elsif  data_tentatively_latched_int = '1' then
+        elsif  data_tentatively_latched = '1' then
           has_been_fully_latched <= '0';
         end if;
       end if;
@@ -196,7 +184,5 @@ begin
 
 
   data_fully_latched <= data_fully_latched_int;
-  data_tentatively_latched <= data_tentatively_latched_int;
-  next_byte_index <= next_byte_index_int;
   latched_data    <= latched_data_int;
 end;
