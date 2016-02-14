@@ -14,7 +14,9 @@ entity uart_top is
     uart_tx : out std_logic;
 
     rx_data  : out std_logic_vector(7 downto 0);
-    received : out std_logic
+    received : out std_logic;
+
+    run_counter_dbg : out std_logic
     );
 end;
 
@@ -39,7 +41,9 @@ begin
 
       new_data      => received_int,
       framing_error => framing_error,
-      data          => rx_data_int
+      data          => rx_data_int,
+
+      run_counter_dbg => run_counter_dbg
       );
 
   uart_tx_1 : entity virtual_button_lib.uart_tx

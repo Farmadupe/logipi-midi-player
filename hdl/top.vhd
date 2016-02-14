@@ -42,15 +42,16 @@ architecture rtl of top is
   signal clk : std_logic;
 
   -- uart signals
-  signal uart_rx_data  : std_logic_vector(7 downto 0);
-  signal uart_received : std_logic;
+  signal uart_rx_data    : std_logic_vector(7 downto 0);
+  signal uart_received   : std_logic;
+  signal run_counter_dbg : std_logic;
 
   -- button signals
   signal buttons : button_arr;
 
   -- spi signals
   constant spi_tx_max_block_size : integer := 2;
-  signal miso_int : std_logic;
+  signal miso_int                : std_logic;
 
   -- each spartan 6 RAMB8BWER is 1024 bits long. There is no point in reducing
   -- this number to less than 1024.
@@ -66,11 +67,14 @@ architecture rtl of top is
   signal enable_spi_tx : std_logic;
 
   --midi signals
-  signal pcm_out     : signed(15 downto 0);
-  signal new_pcm_out : std_logic;
+  signal pcm_out          : signed(15 downto 0);
+  signal pcm_out_2        : signed(15 downto 0);
+  signal pcm_out_combined : signed(16 downto 0);
+  signal new_pcm_out      : std_logic;
 
 
-  signal midi_no : midi_note_t;
+  signal midi_no   : midi_note_t;
+  signal midi_no_2 : midi_note_t;
 begin
 
   --clock_multiplier_1 : entity virtual_button_lib.clock_multiplier
@@ -86,7 +90,9 @@ begin
       uart_tx => fpga_to_pi_pin,
 
       rx_data  => uart_rx_data,
-      received => uart_received
+      received => uart_received,
+
+      run_counter_dbg => run_counter_dbg
       );
 
   many_buttons_1 : entity virtual_button_lib.many_buttons
@@ -122,7 +128,8 @@ begin
       contents_count => spi_contents_count
       );
 
-  spi_fpga_to_mcu_data <= std_logic_vector(pcm_out);
+  pcm_out_combined     <= resize(pcm_out, pcm_out_combined'length) + resize(pcm_out_2, pcm_out_combined'length);
+  spi_fpga_to_mcu_data <= std_logic_vector(pcm_out_combined(16 downto 1));
 
   choose_midi_no : process(ctrl.clk) is
   begin
@@ -139,6 +146,21 @@ begin
     end if;
   end process;
 
+  choose_midi_no_2 : process(ctrl.clk) is
+  begin
+    if rising_edge(ctrl.clk) then
+      if ctrl.reset_n = '0' then
+        midi_no_2 <= 69;
+      else
+        if buttons(y).pressed = '1' then
+          midi_no_2 <= midi_no_2 + 1;
+        elsif buttons(h).pressed = '1' then
+          midi_no_2 <= midi_no_2 - 1;
+        end if;
+      end if;
+    end if;
+  end process;
+
   temp_midi_note_player_1 : entity work.temp_midi_note_player
     port map (
       ctrl        => ctrl,
@@ -146,6 +168,15 @@ begin
       buttons     => buttons,
       pcm_out     => pcm_out,
       new_pcm_out => new_pcm_out);
+
+  temp_midi_note_player_2 : entity work.temp_midi_note_player
+    port map (
+      ctrl        => ctrl,
+      midi_no     => midi_no_2,
+      buttons     => buttons,
+      pcm_out     => pcm_out_2,
+      new_pcm_out => open);
+
 
   spi_enqueue_fpga_to_mcu_data <= new_pcm_out;
 
@@ -164,6 +195,8 @@ begin
       enable_spi_tx      => enable_spi_tx,
       mosi               => mosi,
       miso               => miso_int,
+
+      run_counter_dbg => run_counter_dbg,
 
       light_square_data => light_square_data
       );

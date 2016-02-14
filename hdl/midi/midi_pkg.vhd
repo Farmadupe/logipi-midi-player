@@ -29,6 +29,9 @@ package midi_pkg is
   function calc_strides return stride_arr_t;
 
   constant midi_counter_width : integer := 17;
+
+  -- A type that allows us to use generate statements to build sine generators
+  type midi_note_arr_t is array(0 to num_sine_generators - 1) of midi_note_t;
 end;
 
 package body midi_pkg is

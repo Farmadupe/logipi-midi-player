@@ -24,6 +24,8 @@ entity debug_light_generator is
     mosi               : in std_logic;
     miso               : in std_logic;
 
+    run_counter_dbg : in std_logic;
+
     light_square_data : out std_logic
     );
 end;
@@ -98,9 +100,20 @@ begin
 
       ws2812_data(16 to 23) <= contents_count_debug;
 
+
+      -- uart rx run_counter
+      if run_counter_dbg = '1' then
+        ws2812_data(60) <= ws2812_blue;
+      else
+        ws2812_data(60) <= ws2812_clear;
+      end if;
+
+
       if buttons(o).toggle = '1' then
         ws2812_data <= (others => ws2812_clear);
       end if;
+
+
 
 
     end if;

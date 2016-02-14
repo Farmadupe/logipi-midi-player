@@ -14,7 +14,9 @@ entity uart_rx is
 
     new_data      : out std_logic;
     framing_error : out std_logic;
-    data          : out std_logic_vector(7 downto 0)
+    data          : out std_logic_vector(7 downto 0);
+
+    run_counter_dbg : out std_logic
     );
 end entity;
 
@@ -131,7 +133,7 @@ begin
     end if;
   end process;
 
-  run_counter <= '1' when state = offset_Wait or state = wait_next_bit else '0';
+  run_counter <= '1' when state = offset_wait or state = wait_next_bit else '0';
 
   counter_max_select : process(ctrl.clk)
   begin
@@ -213,4 +215,7 @@ begin
     end if;
   end process;
 
+  run_counter_dbg <= run_counter;
+
 end architecture;
+
