@@ -59,6 +59,7 @@ begin
   ws2812_colour_select : process (ctrl.clk) is
   begin
     if rising_edge(ctrl.clk) then
+      
       if ctrl.reset_n = '0' then
         ws2812_data(0) <= ws2812_red;
       elsif buttons(k).toggle = '1' then
@@ -112,8 +113,6 @@ begin
       if buttons(o).toggle = '1' then
         ws2812_data <= (others => ws2812_clear);
       end if;
-
-
 
 
     end if;

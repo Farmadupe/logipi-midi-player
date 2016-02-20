@@ -28,7 +28,7 @@ architecture rtl of temp_midi_note_player is
   constant period : period_arr_t := calc_periods_in_current_note;
 
   -- sine signals
-  signal sine_read_address : integer range 0 to num_lut_entries;
+  signal sine_read_address : integer range 0 to sine_addr_max;
   signal sine_read_out     : signed(15 downto 0);
 
   -- audio output strober
@@ -83,7 +83,7 @@ begin
   end process;
 
   -- todo Make this prettier
-  sine_read_address <= to_integer(sine_driver_counter) / (2**(midi_counter_width - integer(log2(real(num_lut_entries)))));
+  sine_read_address <= to_integer(sine_driver_counter) / (2**(midi_counter_width - integer(log2(real(sine_addr_max)))));
 
   new_pcm_out <= audio_freq_counter_done and buttons(e).toggle;
 end;
