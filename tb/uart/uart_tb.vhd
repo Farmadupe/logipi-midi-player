@@ -26,18 +26,18 @@ architecture behavior of testbench is
   signal light_square_data : std_logic;
 begin
 
-  top_2 : entity virtual_button_lib.top
-    port map (
-      clk_50mhz         => clk_50mhz,
-      pb_0              => '0',
-      pb_1              => '0',
-      sw_0              => sw_0,
-      sw_1              => '0',
-      led_0             => led_0,
-      led_1             => led_1,
-      pi_to_fpga_pin    => pi_to_fpga_pin,
-      fpga_to_pi_pin    => fpga_to_pi_pin,
-      light_square_data => light_square_data);
+  --top_2 : entity virtual_button_lib.top
+  --  port map (
+  --    clk_50mhz         => clk_50mhz,
+  --    pb_0              => '0',
+  --    pb_1              => '0',
+  --    sw_0              => sw_0,
+  --    sw_1              => '0',
+  --    led_0             => led_0,
+  --    led_1             => led_1,
+  --    pi_to_fpga_pin    => pi_to_fpga_pin,
+  --    fpga_to_pi_pin    => fpga_to_pi_pin,
+  --    light_square_data => light_square_data);
 
   -- Clock process definitions
   clk_process : process

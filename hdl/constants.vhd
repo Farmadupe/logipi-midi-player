@@ -4,5 +4,5 @@ package constants is
   constant spi_word_length : integer := 8;
 
   --sine wave generator configuration
-  constant num_sine_generators : integer := 5;
+  constant num_sines : integer := 2;
 end;

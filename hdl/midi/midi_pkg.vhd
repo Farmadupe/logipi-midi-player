@@ -20,7 +20,7 @@ package midi_pkg is
   --are attained by incrementing counters at varying rates. This table holds
   --the rates at which these counters must be incremented to output those sine
   --waves.
-  -- TODO consider range constraining. Is it possible to do this dynamically?
+  -- TODO consider range constraining. Is it easy to do this dynamically?
   -- TODO consider unverboseing the above comment.
   type stride_arr_t is array (midi_note_t'low to midi_note_t'high) of integer;
   type period_arr_t is array (midi_note_t'low to midi_note_t'high) of real;
@@ -31,7 +31,7 @@ package midi_pkg is
   constant midi_counter_width : integer := 17;
 
   -- A type that allows us to use generate statements to build sine generators
-  type midi_note_arr_t is array(0 to num_sine_generators - 1) of midi_note_t;
+  type midi_note_arr_t is array(0 to num_sines - 1) of midi_note_t;
 end;
 
 package body midi_pkg is

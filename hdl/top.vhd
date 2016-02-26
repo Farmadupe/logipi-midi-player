@@ -67,21 +67,12 @@ architecture rtl of top is
   signal enable_spi_tx : std_logic;
 
   --midi signals
-  signal pcm_out          : signed(15 downto 0);
-  signal pcm_out_2        : signed(15 downto 0);
-  signal pcm_out_combined : signed(16 downto 0);
-  signal new_pcm_out      : std_logic;
+  signal pcm_out     : signed(15 downto 0);
+  signal new_pcm_out : std_logic;
 
 
-  signal midi_no   : midi_note_t;
-  signal midi_no_2 : midi_note_t;
+  signal midi_nos : midi_note_arr_t;
 begin
-
-  --clock_multiplier_1 : entity virtual_button_lib.clock_multiplier
-  --  port map (
-  --    clk_in  => clk_50mhz,
-  --    clk_out => clk
-  --    );
 
   uart_top_1 : entity virtual_button_lib.uart_top
     port map (
@@ -128,19 +119,19 @@ begin
       contents_count => spi_contents_count
       );
 
-  pcm_out_combined     <= resize(pcm_out, pcm_out_combined'length) + resize(pcm_out_2, pcm_out_combined'length);
-  spi_fpga_to_mcu_data <= std_logic_vector(pcm_out_combined(16 downto 1));
+  
+  spi_fpga_to_mcu_data <= std_logic_vector(pcm_out);
 
   choose_midi_no : process(ctrl.clk) is
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
-        midi_no <= 69;
+        midi_nos(0) <= 69;
       else
-        if midi_no < midi_note_t'high and buttons(u).pressed = '1' then
-          midi_no <= midi_no + 1;
-        elsif midi_no > midi_note_t'low and buttons(j).pressed = '1' then
-          midi_no <= midi_no - 1;
+        if midi_nos(0) < midi_note_t'high and buttons(u).pressed = '1' then
+          midi_nos(0) <= midi_nos(0) + 1;
+        elsif midi_nos(0) > midi_note_t'low and buttons(j).pressed = '1' then
+          midi_nos(0) <= midi_nos(0) - 1;
         end if;
       end if;
     end if;
@@ -150,32 +141,23 @@ begin
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
-        midi_no_2 <= 69;
+        midi_nos(1) <= 69;
       else
         if buttons(y).pressed = '1' then
-          midi_no_2 <= midi_no_2 + 1;
+          midi_nos(1) <= midi_nos(1) + 1;
         elsif buttons(h).pressed = '1' then
-          midi_no_2 <= midi_no_2 - 1;
+          midi_nos(1) <= midi_nos(1) - 1;
         end if;
       end if;
     end if;
   end process;
 
-  temp_midi_note_player_1 : entity work.temp_midi_note_player
+  temp_midi_note_player_1 : entity work.many_sines
     port map (
       ctrl        => ctrl,
-      midi_no     => midi_no,
-      buttons     => buttons,
+      midi_nos    => midi_nos,
       pcm_out     => pcm_out,
       new_pcm_out => new_pcm_out);
-
-  temp_midi_note_player_2 : entity work.temp_midi_note_player
-    port map (
-      ctrl        => ctrl,
-      midi_no     => midi_no_2,
-      buttons     => buttons,
-      pcm_out     => pcm_out_2,
-      new_pcm_out => open);
 
 
   spi_enqueue_fpga_to_mcu_data <= new_pcm_out;
