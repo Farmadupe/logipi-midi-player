@@ -4,8 +4,12 @@ use ieee.numeric_std.all;
 
 
 library virtual_button_lib;
-use virtual_button_lib.sine_lut_pkg.all;
 
+use virtual_button_lib.utils.all;
+use virtual_button_lib.constants.all;
+
+-- Used only for midi_note_t and midi_note_arr_t
+use virtual_button_lib.midi_pkg.all;
 
 entity sine_rom_tb is
 end;
@@ -13,41 +17,34 @@ end;
 architecture behavioural of sine_rom_tb is
 
 
-  signal clk          : std_logic;
-  signal read_address : integer range 0 to sine_addr_max;
-  signal read_out     : signed(15 downto 0);
+  signal ctrl : ctrl_t;
+
+  signal midi_nos    : midi_note_arr_t := (60, 80);
+  signal pcm_out     : signed(15 downto 0);
+  signal new_pcm_out : std_logic;
 begin
 
   clk_proc : process is
   begin
-    clk <= '0';
+    ctrl.clk <= '0';
     wait for 1 ns;
-    clk <= '1';
+    ctrl.clk <= '1';
     wait for 1 ns;
   end process;
 
-  sine_rom_1 : entity virtual_button_lib.sine_rom
+  many_sines_1 : entity work.many_sines
     port map (
-      clk          => clk,
-      read_address => read_address,
-      read_out     => read_out);
+      ctrl        => ctrl,
+      midi_nos    => midi_nos,
+      pcm_out     => pcm_out,
+      new_pcm_out => new_pcm_out);
+
 
   tb : process
   begin
-    read_address <= 0;
-    while read_address < sine_addr_max loop
-      wait until rising_edge(clk);
-      wait until rising_edge(clk);
-      wait until rising_edge(clk);
-      wait until rising_edge(clk);
-      wait until rising_edge(clk);
-      wait until rising_edge(clk);
-      wait until rising_edge(clk);
-      wait until rising_edge(clk);
-      wait until rising_edge(clk);
-      wait until rising_edge(clk);
-      read_address <= read_address + 1;
-    end loop;
+    ctrl.reset_n <= '0';
+    wait for 1 us;
+    ctrl.reset_n <= '1';
 
     wait;
   end process tb;

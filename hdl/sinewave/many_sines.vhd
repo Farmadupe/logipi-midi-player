@@ -27,17 +27,21 @@ architecture rtl of many_sines is
 
 
 
-  type sine_internals is record
-    sine_rom_read_address : integer range 0 to sine_addr_max;
-    sine_rom_read_out     : signed(15 downto 0);
-    stride                : integer range 0 to calc_strides(midi_note_t'high);
-    sine_driver_counter   : unsigned (midi_counter_width - 1 downto 0);
-  end record;
-  type internals_arr is array(0 to num_sines - 1) of sine_internals;
-  signal internals : internals_arr;
 
 
-  constant strides : stride_arr_t := calc_strides;
+
+  type sine_rom_read_address_arr_t is array(0 to num_sines - 1) of integer range 0 to sine_addr_max;
+  type sine_rom_read_out_arr_t is array(0 to num_sines - 1) of signed(15 downto 0);
+  type strides_arr_t is array(0 to num_sines - 1) of integer range 0 to calc_strides(midi_note_t'high);
+  type sine_driver_counter_arr_t is array(0 to num_sines - 1) of unsigned (midi_counter_width - 1 downto 0);
+
+  signal sine_rom_read_addresses : sine_rom_read_address_arr_t;
+  signal sine_rom_read_outs      : sine_rom_read_out_arr_t;
+  signal strides                 : strides_arr_t;
+  signal sine_driver_counters    : sine_driver_counter_arr_t := (others => (others => '0'));
+
+
+  constant stride_lut : stride_arr_t := calc_strides;
 
 
   -- These signals delay the current sine to allow sine_rom_read_out to be read
@@ -61,9 +65,9 @@ begin
     begin
       if rising_edge(ctrl.clk) then
         if ctrl.reset_n = '0' then
-          internals(j).sine_driver_counter <= (others => '0');
+          sine_driver_counters(j) <= (others => '0');
         elsif audio_freq_counter_done = '1' then
-          internals(j).sine_driver_counter <= internals(j).sine_driver_counter + internals(j).stride;
+          sine_driver_counters(j) <= sine_driver_counters(j) + strides(j);
         end if;
       end if;
     end process;
@@ -74,16 +78,16 @@ begin
     -- Note that the width of sine_driver counter is determined by the need to
     -- maintain a correct output frequency granularity. This line removes the
     -- bits which are not necessary for an address lookup.
-    internals(j).sine_rom_read_address <=
-      to_integer(internals(j).sine_driver_counter) / (2**(midi_counter_width - integer(log2(real(sine_addr_max)))));
+    sine_rom_read_addresses(j) <=
+      to_integer(sine_driver_counters(j)) / (2**(midi_counter_width - integer(log2(real(sine_addr_max)))));
   end generate;
 
   -- A single lookup table for sinewave generators.
   sine_rom_1 : entity virtual_button_lib.sine_rom
     port map (
-      clk          => ctrl.clk,
-      read_address => read_address,
-      read_out     => read_out
+      ctrl            => ctrl,
+      read_address_d0 => read_address,
+      read_out_d1     => read_out
       );
 
   -- A round robin multiplexer.
@@ -98,18 +102,21 @@ begin
       end if;
 
       current_sine_d1 <= current_sine;
-      current_sine_d2 <= current_sine_d1;
 
-      read_address                                 <= internals(current_sine).sine_rom_read_address;
-      internals(current_sine_d2).sine_rom_read_out <= read_out;
+      read_address                        <= sine_rom_read_addresses(current_sine);
+      sine_rom_read_outs(current_sine_d1) <= read_out;
     end if;
   end process;
 
   stride_lookup_mux : process(ctrl.clk)
   begin
     if rising_edge(ctrl.clk) then
-      stride_read_addr                  <= midi_nos(current_sine);
-      internals(current_sine_d1).stride <= strides(stride_read_addr);
+      if ctrl.reset_n = '0' then
+        stride_read_addr <= midi_note_t'low;
+      else
+        stride_read_addr         <= midi_nos(current_sine);
+        strides(current_sine_d1) <= stride_lut(stride_read_addr);
+      end if;
     end if;
   end process;
 
@@ -132,9 +139,9 @@ begin
     variable pcm_out_int : signed(15 + num_sines - 1 downto 0);
   begin
     if rising_edge(ctrl.clk) then
+      pcm_out_int := to_signed(0, pcm_out_int'length);
       for i in 0 to num_sines - 1 loop
-        pcm_out_int := to_signed(0, pcm_out_int'length);
-        pcm_out_int := resize(internals(i).sine_rom_read_out, pcm_out_int'length) + pcm_out_int;
+        pcm_out_int := resize(sine_rom_read_outs(i), pcm_out_int'length) + pcm_out_int;
 
         pcm_out <= pcm_out_int(pcm_out_int'left downto pcm_out_int'left - 15);
       end loop;

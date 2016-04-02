@@ -8,8 +8,7 @@ use virtual_button_lib.constants.all;
 entity spi_tx is
   generic (
     cpol              : integer;
-    cpha              : integer;
-    tx_max_block_size : integer
+    cpha              : integer
     );
   port(
     ctrl : in ctrl_t;

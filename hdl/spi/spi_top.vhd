@@ -57,8 +57,7 @@ begin
   spi_tx_1 : entity virtual_button_lib.spi_tx
     generic map (
       cpol              => cpol,
-      cpha              => cpha,
-      tx_max_block_size => tx_max_block_size)
+      cpha              => cpha)
     port map (
       ctrl               => ctrl,
       cs_n               => cs_n,
