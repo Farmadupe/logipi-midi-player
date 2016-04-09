@@ -56,7 +56,7 @@ begin
 
       read_out => read_out_data);
 
-  
+   
   calc_contents_count : process(ctrl.clk) is
   begin
     if rising_edge(ctrl.clk) then

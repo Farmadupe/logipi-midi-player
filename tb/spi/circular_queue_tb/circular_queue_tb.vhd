@@ -12,18 +12,20 @@ end;
 architecture behavioural of circular_queue_tb is
   constant queue_depth  : integer := 2;
   signal ctrl           : ctrl_t;
-  signal enqueue        : std_logic;
-  signal dequeue        : std_logic;
-  signal write_in_data  : std_logic_vector(7 downto 0);
+  signal enqueue        : std_logic := '0';
+  signal dequeue        : std_logic := '0';
+  signal write_in_data  : std_logic_vector(7 downto 0) := (others => '0');
   signal read_out_data  : std_logic_vector(7 downto 0);
   signal empty          : std_logic;
   signal full           : std_logic;
-  signal contents_count : natural range 0 to queue_depth - 1;
+  signal contents_count : natural range 0 to queue_depth + 1;
 begin
 
   circular_queue_1 : entity work.circular_queue
     generic map (
-      queue_depth => queue_depth)
+      queue_depth => queue_depth,
+      queue_width => 8
+      )
     port map (
       ctrl           => ctrl,
       enqueue        => enqueue,
@@ -125,6 +127,7 @@ begin
     assert contents_count = 0 report "contents_count fail after dequeueing and empty queue";
 
 
+    assert false severity failure;
     wait;
   end process;
   
