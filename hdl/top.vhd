@@ -24,7 +24,7 @@ entity top is
     pi_to_fpga_pin : in  std_logic;
     fpga_to_pi_pin : out std_logic;
 
-    -- spi interface;
+    -- spi interface
     sclk : in  std_logic;
     cs_n : in  std_logic;
     mosi : in  std_logic;
@@ -50,7 +50,7 @@ architecture rtl of top is
   signal buttons : button_arr;
 
   -- spi signals
-  signal miso_int                : std_logic;
+  signal miso_int : std_logic;
 
 
   signal spi_new_mcu_to_fpga_data     : std_logic;
@@ -68,6 +68,11 @@ architecture rtl of top is
 
 
   signal midi_nos : midi_note_arr_t;
+
+  -- midi ram signals
+  signal midi_ram_empty          : std_logic;
+  signal midi_ram_full           : std_logic;
+  signal midi_ram_contents_count : natural range 0 to midi_file_rx_bram_depth;
 begin
 
   uart_top_1 : entity virtual_button_lib.uart_top
@@ -115,7 +120,7 @@ begin
       contents_count => spi_contents_count
       );
 
-  
+
   spi_fpga_to_mcu_data <= std_logic_vector(pcm_out);
 
   choose_midi_no : process(ctrl.clk) is
@@ -159,6 +164,23 @@ begin
   spi_enqueue_fpga_to_mcu_data <= new_pcm_out;
 
 
+  midi_ram : entity work.circular_queue
+    generic map (
+      queue_depth => midi_file_rx_bram_depth,
+      queue_width => 8
+      )
+    port map (
+      ctrl           => ctrl,
+      enqueue        => spi_new_mcu_to_fpga_data,
+      dequeue        => '0',
+      write_in_data  => spi_mcu_to_fpga_data,
+      read_out_data  => open,
+      empty          => midi_ram_empty,
+      full           => midi_ram_full,
+      contents_count => midi_ram_contents_count
+      );
+
+
   debug_light_generator_1 : entity virtual_button_lib.debug_light_generator
     generic map(
       spi_tx_max_block_size => spi_tx_max_block_size,
@@ -173,6 +195,10 @@ begin
       enable_spi_tx      => enable_spi_tx,
       mosi               => mosi,
       miso               => miso_int,
+
+      midi_ram_empty          => midi_ram_empty,
+      midi_ram_full           => midi_ram_full,
+      midi_ram_contents_count => midi_ram_contents_count,
 
       run_counter_dbg => run_counter_dbg,
 

@@ -57,7 +57,7 @@ architecture rtl of many_sines is
   signal audio_freq_counter_done  : std_logic;
 
   -- stride signals
-  signal stride_read_addr : integer;
+  signal stride_read_addr : midi_note_t;
 begin
 
   sine_counter_runners : for j in 0 to num_sines - 1 generate

@@ -1,0 +1,19 @@
+# Current time Sun Apr  3 22:27:55 2016
+# ModelSim Microsemi Stack Trace
+# Program = vish
+# Id = "10.4c"
+# Version = "2015.07"
+# Date = "Aug 12 2015"
+# Platform = linuxpe
+# 0    0x081cc2f4: 'tree_get_index + 0x204' in '/mnt/Xilinx/Libero/Model/modeltech/linuxacoem/vish'
+# 1    0x081d8e04: 'treew_Index + 0x34' in '/mnt/Xilinx/Libero/Model/modeltech/linuxacoem/vish'
+# 2    0x081dc974: '<unknown (@0x81dc974)>'
+# 3    0x084a4ded: '<unknown (@0x84a4ded)>'
+# 4    0x084eda0a: '<unknown (@0x84eda0a)>'
+# 5    0x084f63ac: '<unknown (@0x84f63ac)>'
+# 6    0x084a6f6c: 'TclEvalObjEx + 0x6c' in '/mnt/Xilinx/Libero/Model/modeltech/linuxacoem/vish'
+# 7    0x084a7406: 'Tcl_EvalObjEx + 0x36' in '/mnt/Xilinx/Libero/Model/modeltech/linuxacoem/vish'
+# 8    0xf780eeac: 'Itcl_EvalMemberCode + 0x3cc' in '/mnt/Xilinx/Libero/Model/modeltech/linuxacoem/itcl3.4/libitcl3.4.so'
+# 9    0x0afd2143: '<unknown (@0xafd2143)>'
+# 10   0x097a09fb: '<unknown (@0x97a09fb)>'
+# 11   0x6863725c: '<unknown (@0x6863725c)>'

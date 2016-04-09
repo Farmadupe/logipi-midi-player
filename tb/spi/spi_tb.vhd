@@ -23,7 +23,6 @@ architecture behavior of spi_tb is
   signal request_more_from_mcu : std_logic;
 
   -- Clock period definitions
-  constant sclk_period : time    := 100 ns;
   constant block_size  : integer := 10;
 
 

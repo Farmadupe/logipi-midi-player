@@ -11,14 +11,16 @@ use virtual_button_lib.utils.all;
 
 entity circular_queue is
   generic(
-    queue_depth : positive);
+    queue_depth : positive;
+    queue_width : positive
+    );
   port (
     ctrl : in ctrl_t;
 
     enqueue        : in  std_logic;
     dequeue        : in  std_logic;
-    write_in_data  : in  std_logic_vector(15 downto 0);
-    read_out_data  : out std_logic_vector(15 downto 0);
+    write_in_data  : in  std_logic_vector(queue_width - 1 downto 0);
+    read_out_data  : out std_logic_vector(queue_width - 1 downto 0);
     empty          : out std_logic;
     full           : out std_logic;
     contents_count : out natural range 0 to queue_depth
@@ -43,7 +45,7 @@ begin
   ram_1 : entity virtual_button_lib.ram
     generic map(
       depth => queue_depth,
-      width => 16
+      width => queue_width
       )
     port map (
       ctrl            => ctrl,

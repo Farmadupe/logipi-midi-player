@@ -69,7 +69,8 @@ begin
 
   tx_fifo : entity work.circular_queue
     generic map(
-      queue_depth => tx_ram_depth
+      queue_depth => tx_ram_depth,
+      queue_width => 16
       )
     port map (
       ctrl           => ctrl,
@@ -111,6 +112,9 @@ begin
       new_data => new_mcu_to_fpga_data_from_rx);
 
 
+  -- spi_rx does not know about data framing. This process does.
+  -- WOrks out if if a received byte is data or framing-information. If it is
+  -- data, then flats it to the rest of the fpga through new_mcu_to_fpga_data
   decode_rx_frame : process(ctrl.clk) is
   begin
     if rising_edge(ctrl.clk) then

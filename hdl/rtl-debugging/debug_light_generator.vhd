@@ -24,6 +24,10 @@ entity debug_light_generator is
     mosi               : in std_logic;
     miso               : in std_logic;
 
+    midi_ram_empty          : in std_logic;
+    midi_ram_full           : in std_logic;
+    midi_ram_contents_count : in integer range 0 to midi_file_rx_bram_depth;
+
     run_counter_dbg : in std_logic;
 
     light_square_data : out std_logic
@@ -36,14 +40,15 @@ architecture rtl of debug_light_generator is
   signal ws2812_data    : ws2812_array_t(0 to num_leds - 1);
   signal current_ws2812 : ws2812_t;
 
-  signal contents_count_debug : ws2812_array_t(0 to 7);
+  signal contents_count_debug      : ws2812_array_t(0 to 7);
+  signal midi_ram_contents_count_debug : ws2812_array_t(0 to 7);
 
   -- whenever the tx buffer fills all the way up, display a light for 0.5 sec.
   signal held_spi_tx_buffer_full            : std_logic;
   constant spi_tx_buffer_full_counter_limit : integer := 5 sec / clk_period;
   signal spi_tx_buffer_full_counter         : integer range 0 to spi_tx_buffer_full_counter_limit;
 begin
-  
+
   ws2812_drv_1 : entity virtual_button_lib.ws2812_drv
     generic map (
       num_leds => num_leds)
@@ -59,7 +64,7 @@ begin
   ws2812_colour_select : process (ctrl.clk) is
   begin
     if rising_edge(ctrl.clk) then
-      
+
       if ctrl.reset_n = '0' then
         ws2812_data(0) <= ws2812_red;
       elsif buttons(k).toggle = '1' then
@@ -101,6 +106,14 @@ begin
 
       ws2812_data(16 to 23) <= contents_count_debug;
 
+      ws2812_data(24 to 31) <= midi_ram_contents_count_debug;
+
+      if midi_ram_empty = '1' then
+        ws2812_data(33) <= ws2812_green;
+      elsif midi_ram_full = '1' then
+        ws2812_data(33) <= ws2812_blue;
+      end if;
+
 
       -- uart rx run_counter
       if run_counter_dbg = '1' then
@@ -139,13 +152,21 @@ begin
     end if;
   end process;
 
-  debug_contents_count_1 : entity virtual_button_lib.debug_contents_count
+  debug_spi_contents_count : entity virtual_button_lib.debug_contents_count
     generic map (
       spi_tx_ram_depth => spi_tx_ram_depth)
     port map (
       ctrl                 => ctrl,
       contents_count       => contents_count,
       contents_count_debug => contents_count_debug);
+
+  debug_midi_contents_count : entity virtual_button_lib.debug_contents_count
+    generic map (
+      spi_tx_ram_depth => midi_file_rx_bram_depth)
+    port map (
+      ctrl                 => ctrl,
+      contents_count       => midi_ram_contents_count,
+      contents_count_debug => midi_ram_contents_count_debug);
 
 
 end;
