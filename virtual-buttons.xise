@@ -134,7 +134,7 @@
       <association xil_pn:name="Implementation" xil_pn:seqID="12"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
-    <file xil_pn:name="tb/spi/circular_queue_tb.vhd" xil_pn:type="FILE_VHDL">
+    <file xil_pn:name="tb/spi/circular_queue_tb/circular_queue_tb.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="93"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="93"/>
@@ -194,11 +194,6 @@
       <association xil_pn:name="Implementation" xil_pn:seqID="18"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
-    <file xil_pn:name="hdl/sinewave/sine_generator.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
-      <library xil_pn:name="virtual_button_lib"/>
-    </file>
     <file xil_pn:name="hdl/sinewave/sine_rom.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="2"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="16"/>
@@ -209,11 +204,6 @@
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="97"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="97"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="97"/>
-      <library xil_pn:name="virtual_button_lib"/>
-    </file>
-    <file xil_pn:name="tb/top_timesim.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
       <library xil_pn:name="virtual_button_lib"/>
     </file>
     <file xil_pn:name="hdl/sinewave/many_sines.vhd" xil_pn:type="FILE_VHDL">

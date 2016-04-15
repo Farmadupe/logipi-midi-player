@@ -32,7 +32,7 @@ architecture rtl of many_sines is
 
   type sine_rom_read_address_arr_t is array(0 to num_sines - 1) of integer range 0 to sine_addr_max;
   type sine_rom_read_out_arr_t is array(0 to num_sines - 1) of signed(15 downto 0);
-  type strides_arr_t is array(0 to num_sines - 1) of integer range 0 to calc_strides(midi_note_t'high);
+  type strides_arr_t is array(0 to num_sines - 1) of integer range 0 to calc_midi_note_strides(midi_note_t'high);
   type sine_driver_counter_arr_t is array(0 to num_sines - 1) of unsigned (midi_counter_width - 1 downto 0);
 
   signal sine_rom_read_addresses : sine_rom_read_address_arr_t;
@@ -41,7 +41,7 @@ architecture rtl of many_sines is
   signal sine_driver_counters    : sine_driver_counter_arr_t := (others => (others => '0'));
 
 
-  constant stride_lut : stride_arr_t := calc_strides;
+  constant stride_lut : stride_arr_t := calc_midi_note_strides;
 
 
   -- These signals delay the current sine to allow sine_rom_read_out to be read
@@ -52,7 +52,7 @@ architecture rtl of many_sines is
   signal read_out     : signed(15 downto 0);
 
   -- Signals for generating the audio sampling frequency
-  constant audio_freq_counter_max : integer := audio_period / clk_period;
+  constant audio_freq_counter_max : integer := sample_period / clk_period;
   signal audio_freq_counter       : integer range 0 to audio_freq_counter_max;
   signal audio_freq_counter_done  : std_logic;
 

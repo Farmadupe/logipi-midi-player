@@ -24,7 +24,7 @@ package button_pkg is
 
   -- There is no convenient direct way to get the ascii value of a lowercase,
   -- thus we must map it individually
-  constant lowercase_to_ascii_mapping : lowercase_t := (
+  constant lowercase_to_ascii_mapping : lowercase_to_ascii_arr := (
     a => 'a',
     b => 'b',
     c => 'c',
@@ -78,7 +78,7 @@ package body button_pkg is
   begin
     return
       std_logic_vector(
-        to_unsigned(character'pos(lowercase(char)),
+        to_unsigned(character'pos(lowercase_to_ascii_mapping(char)),
                     8));
   end;
 end;

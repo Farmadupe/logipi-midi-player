@@ -14,7 +14,7 @@ entity many_buttons is
     ctrl     : in     ctrl_t;
     data     : in ascii_vector;
     new_data : in std_logic;
-    buttons  : buffer button_arr
+    buttons  : out button_arr
     );
 end;
 

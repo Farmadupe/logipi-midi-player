@@ -9,7 +9,7 @@ use virtual_button_lib.button_pkg.all;
 
 entity single_button is
   generic(
-    the_char : lowercase_index
+    the_char : lowercase_enum
     );
 
   port(
@@ -17,8 +17,8 @@ entity single_button is
     rx_data  : in ascii_vector;
     new_data : in std_logic;
 
-    pressed : buffer std_logic;
-    toggle  : buffer std_logic
+    pressed : out std_logic;
+    toggle  : out std_logic
     );
 end;
 
