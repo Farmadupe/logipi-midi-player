@@ -1,3 +1,32 @@
+-- Returns the sine of a value from 0 to 1 (scaled as - to sine_addr_max)
+-- 
+-- The lookup table actually stores the first quarter of each sine wave, so
+-- this entity transforms the stored first quarter to be able to calculate the
+-- sine of any quarter of the wave. The following graph shoes the relation
+-- between inputs to the entity (x axis) and outputs from the module (y axis)
+--
+-- y=1.0
+--  |    -------------
+--  |   /             \
+--  |  /               \
+--  | /                 \
+--  |/                   \
+--  |--------------------------------------------
+--  |                      \                   /
+--  |                       \                 /
+--  |                        \               /
+--  |                         \-------------/
+--  |<---a---->|<---b---->|<---c---->|<---d---->|
+--  x=0       0.25       0.5        0.75        1
+-- y=-1
+--
+-- In Section a, the output value is directly read from the LUT.
+-- In Section b, the output value is directly read but the LUT is indexed by 0.25-x
+-- In Section c, the LUT output is negates and the LUT is indexed by x-0.5
+-- In Section d, the LUT output is negates and the LUT is indexed by 0.75-x
+--
+-- The implementation is gently pipelined.
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use ieee.numeric_std.all;

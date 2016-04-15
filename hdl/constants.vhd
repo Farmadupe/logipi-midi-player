@@ -1,6 +1,9 @@
+-- Tweakable constants
+
 package constants is
   constant clk_period : time := 1 sec / 50_000_000;
 
+  -- todo this constant is useless. Remove it.
   constant spi_word_length : integer := 8;
 
   -----------------------------------------------------------------------------

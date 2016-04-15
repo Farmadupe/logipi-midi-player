@@ -1,3 +1,5 @@
+-- In order to avoid compiling simlibs for this device, this file is unused
+
 library ieee;
 use ieee.std_logic_1164.all;
 
