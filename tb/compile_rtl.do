@@ -30,6 +30,9 @@ vcom -work virtual_button_lib $hdl_dir/ws2812/ws2812_drv.vhd
 vcom -work virtual_button_lib $hdl_dir/rtl-debugging/debug_light_generator.vhd
 vcom -work virtual_button_lib $hdl_dir/sinewave/sine_lut_pkg.vhd
 vcom -work virtual_button_lib $hdl_dir/midi/midi_pkg.vhd
+vcom -work virtual_button_lib $hdl_dir/midi/midi_ram.vhd
+vcom -work virtual_button_lib $hdl_dir/midi/midi_decoder.vhd
+vcom -work virtual_button_lib $hdl_dir/midi/midi_top.vhd
 vcom -work virtual_button_lib $hdl_dir/sinewave/sine_rom.vhd
 #vcom -work virtual_button_lib $hdl_dir/sinewave/sine_generator.vhd
 vcom -2008 -work virtual_button_lib $hdl_dir/sinewave/many_sines.vhd

@@ -5,6 +5,8 @@ use ieee.numeric_std.all;
 library virtual_button_lib;
 use virtual_button_lib.utils.all;
 use virtual_button_lib.constants.all;
+use virtual_button_lib.uart_constants.all;
+use virtual_button_lib.uart_functions.all;
 
 entity midi_decoder_tb is end;
 
@@ -17,7 +19,7 @@ architecture tb of midi_decoder_tb is
   signal sw_1              : std_logic := '0';
   signal led_0             : std_logic;
   signal led_1             : std_logic;
-  signal pi_to_fpga_pin    : std_logic;
+  signal pi_to_fpga_pin    : std_logic := '1';
   signal fpga_to_pi_pin    : std_logic;
   signal light_square_data : std_logic;
 
@@ -32,6 +34,8 @@ architecture tb of midi_decoder_tb is
   signal sclk         : std_logic;
   signal mosi         : std_logic := '0';
   signal miso         : std_logic;
+
+  constant block_size : integer := 200;
 begin
   mock_spi_master_1 : entity work.mock_spi_master
     port map (
@@ -77,6 +81,8 @@ begin
     type charfile is file of character;
     file midi_file : charfile;
 
+    variable remaining_bytes : integer := 0;
+
     variable read_char : character;
     variable midi_byte : std_logic_vector(7 downto 0);
   begin
@@ -92,14 +98,22 @@ begin
     file_open(midi_file, "deck.mid", read_mode);
 
     while not endfile(midi_file) loop
-      read(midi_file, read_char);
-      midi_byte := std_logic_vector(to_unsigned(character'pos(read_char), 8));
+      if remaining_bytes /= 0 then
+        read(midi_file, read_char);
+        midi_byte := std_logic_vector(to_unsigned(character'pos(read_char), 8));
+      end if;
 
       if not ready then
         wait until ready;
       end if;
 
-      data <= midi_byte;
+      if remaining_bytes = 0 then
+        data            <= std_logic_vector(to_unsigned(block_size, 8));
+        remaining_bytes := block_size;
+      else
+        data            <= midi_byte;
+        remaining_bytes := remaining_bytes - 1;
+      end if;
 
       wait for 1 ps;
       send <= true;
@@ -108,6 +122,9 @@ begin
       wait for 1 ps;
 
     end loop;
+
+    uart_send(std_logic_vector(to_unsigned(character'pos('q'), 8)), 115200, pi_to_fpga_pin);
+
 
     wait;
   end process;

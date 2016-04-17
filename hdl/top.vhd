@@ -123,35 +123,6 @@ begin
 
   spi_fpga_to_mcu_data <= std_logic_vector(pcm_out);
 
-  choose_midi_no : process(ctrl.clk) is
-  begin
-    if rising_edge(ctrl.clk) then
-      if ctrl.reset_n = '0' then
-        midi_nos(0) <= 69;
-      else
-        if midi_nos(0) < midi_note_t'high and buttons(u).pressed = '1' then
-          midi_nos(0) <= midi_nos(0) + 1;
-        elsif midi_nos(0) > midi_note_t'low and buttons(j).pressed = '1' then
-          midi_nos(0) <= midi_nos(0) - 1;
-        end if;
-      end if;
-    end if;
-  end process;
-
-  choose_midi_no_2 : process(ctrl.clk) is
-  begin
-    if rising_edge(ctrl.clk) then
-      if ctrl.reset_n = '0' then
-        midi_nos(1) <= 69;
-      else
-        if buttons(y).pressed = '1' then
-          midi_nos(1) <= midi_nos(1) + 1;
-        elsif buttons(h).pressed = '1' then
-          midi_nos(1) <= midi_nos(1) - 1;
-        end if;
-      end if;
-    end if;
-  end process;
 
   temp_midi_note_player_1 : entity work.many_sines
     port map (
@@ -164,21 +135,17 @@ begin
   spi_enqueue_fpga_to_mcu_data <= new_pcm_out;
 
 
-  midi_ram : entity work.circular_queue
-    generic map (
-      queue_depth => midi_file_rx_bram_depth,
-      queue_width => 8
-      )
+
+  midi_top_1 : entity virtual_button_lib.midi_top
     port map (
       ctrl           => ctrl,
+      buttons        => buttons,
       enqueue        => spi_new_mcu_to_fpga_data,
-      dequeue        => '0',
       write_in_data  => spi_mcu_to_fpga_data,
-      read_out_data  => open,
+      midi_nos       => midi_nos,
       empty          => midi_ram_empty,
       full           => midi_ram_full,
-      contents_count => midi_ram_contents_count
-      );
+      contents_count => midi_ram_contents_count);
 
 
   debug_light_generator_1 : entity virtual_button_lib.debug_light_generator
@@ -206,10 +173,9 @@ begin
       );
 
 
+    -----------------------------------------------------------------------------
 
-  -----------------------------------------------------------------------------
-
-  ctrl.clk <= clk_50mhz;
+    ctrl.clk <= clk_50mhz;
 
   resetting : process (ctrl.clk) is
   begin
