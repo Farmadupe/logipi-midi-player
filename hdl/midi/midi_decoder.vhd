@@ -18,7 +18,7 @@ entity midi_decoder is
     buttons        : in  button_arr;
     read_addr      : out unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0) := (others => '0');
     midi_ram_data  : in  std_logic_vector(7 downto 0);
-    contents_count : in  natural range 0 to midi_file_rx_bram_depth - 1;
+    contents_count : in  natural range 0 to midi_file_rx_bram_depth;
     enable_decoder : out std_logic;
     errors         : out errors_t;
     midi_no_1      : out midi_note_t

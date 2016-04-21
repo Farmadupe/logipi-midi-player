@@ -29,7 +29,7 @@ entity midi_ram is
     read_out_data  : out std_logic_vector(queue_width - 1 downto 0);
     empty          : out std_logic;
     full           : out std_logic;
-    contents_count : out natural range 0 to queue_depth - 1
+    contents_count : out natural range 0 to queue_depth
     );
 end;
 

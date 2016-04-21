@@ -23,7 +23,7 @@ entity circular_queue is
     read_out_data  : out std_logic_vector(queue_width - 1 downto 0);
     empty          : out std_logic;
     full           : out std_logic;
-    contents_count : out natural range 0 to queue_depth - 1
+    contents_count : out natural range 0 to queue_depth
     );
 end circular_queue;
 
@@ -39,7 +39,7 @@ architecture rtl of circular_queue is
   -- 
   signal full_int           : std_logic := '0';
   signal empty_int          : std_logic := '0';
-  signal contents_count_int : natural range 0 to queue_depth - 1;
+  signal contents_count_int : natural range 0 to queue_depth;
 
 begin
   ram_1 : entity virtual_button_lib.ram
@@ -63,7 +63,7 @@ begin
       -- the true part is needed because otherwise contents_count would be 0
       -- when the fifo was full.
       if full_int = '1' then
-        contents_count_int <= queue_depth - 1;
+        contents_count_int <= queue_depth;
       else
         contents_count_int <= natural(to_integer(next_write_addr - read_addr));
       end if;

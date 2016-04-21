@@ -18,12 +18,12 @@ entity debug_light_generator is
     ctrl : in ctrl_t;
 
     spi_tx_buffer_full : in std_logic;
-    contents_count     : in integer range 0 to spi_tx_ram_depth - 1;
+    contents_count     : in integer range 0 to spi_tx_ram_depth;
     buttons            : in button_arr;
     cs_n               : in std_logic;
     enable_spi_tx      : in std_logic;
 
-    midi_ram_contents_count : in integer range 0 to midi_file_rx_bram_depth - 1;
+    midi_ram_contents_count : in integer range 0 to midi_file_rx_bram_depth;
     enable_decoder          : in std_logic;
     errors                  : in errors_t;
 

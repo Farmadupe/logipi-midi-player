@@ -23,9 +23,9 @@ VPNJGko=U32]CJmKFIodmo3
 Z7 OW;C;10.4c;61
 32
 b1
-Z8 !s110 1461244272
+Z8 !s110 1461245096
 !i10b 1
-Z9 !s108 1461244271.000000
+Z9 !s108 1461245096.000000
 Z10 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/buttons/button_pkg.vhd|
 Z11 !s107 /home/t/virtual-buttons/hdl/buttons/button_pkg.vhd|
 !i113 1
@@ -52,7 +52,7 @@ R12
 R13
 Z14 nbody
 Ecircular_queue
-Z15 w1461243368
+Z15 w1461245034
 Z16 DPx18 virtual_button_lib 5 utils 0 22 hlHSj^C5Y_bRQg9Gk7hnK3
 Z17 DPx18 virtual_button_lib 9 constants 0 22 ZU<Uzk;7l@^8X[kFana6N3
 Z18 DPx4 ieee 9 math_real 0 22 Sk6CSihbPL<f[^Shm]=KX0
@@ -64,38 +64,38 @@ Z19 8/home/t/virtual-buttons/hdl/spi/circular_queue.vhd
 Z20 F/home/t/virtual-buttons/hdl/spi/circular_queue.vhd
 l0
 L12
-Vc@=>Z=_baNN28YHBSKaC90
-!s100 lcCi0Y]EenCTf?EidP=D`2
+V`Y9H[5j^;dA<DYDiMiaof3
+!s100 lZG10lPVlZh:@1Vh_RB5L1
 R7
 32
-Z21 !s110 1461244271
+R8
 !i10b 1
 R9
-Z22 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/spi/circular_queue.vhd|
-Z23 !s107 /home/t/virtual-buttons/hdl/spi/circular_queue.vhd|
+Z21 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/spi/circular_queue.vhd|
+Z22 !s107 /home/t/virtual-buttons/hdl/spi/circular_queue.vhd|
 !i113 1
 R12
 R13
 Artl
-Z24 DEx18 virtual_button_lib 3 ram 0 22 XJ@6o6M`XUOWQcAblP4n]3
+Z23 DEx18 virtual_button_lib 3 ram 0 22 XJ@6o6M`XUOWQcAblP4n]3
 R16
 R17
 R18
 R1
 R2
 R3
-Z25 DEx4 work 14 circular_queue 0 22 c@=>Z=_baNN28YHBSKaC90
+Z24 DEx4 work 14 circular_queue 0 22 `Y9H[5j^;dA<DYDiMiaof3
 l44
 L30
-V]fQ68ZkVbf5gKAikS7NBn0
-!s100 _AGGbFOESULmiEE>e08NI0
+V8[dzXm]eC=Vl3LNY24mf_2
+!s100 zOKCBEFC^[lJ9`0d2g7:B0
 R7
 32
-R21
+R8
 !i10b 1
 R9
+R21
 R22
-R23
 !i113 1
 R12
 R13
@@ -105,17 +105,17 @@ R17
 R2
 R3
 R0
-Z26 8/home/t/virtual-buttons/hdl/clock_multiplier.vhd
-Z27 F/home/t/virtual-buttons/hdl/clock_multiplier.vhd
+Z25 8/home/t/virtual-buttons/hdl/clock_multiplier.vhd
+Z26 F/home/t/virtual-buttons/hdl/clock_multiplier.vhd
 l0
 L13
 VmTnl8CglD;W[R=@lT7HFd1
 !s100 TK8jj^9]<C`YgnX?@3iG_1
 R7
 32
-R8
+Z27 !s110 1461245097
 !i10b 1
-Z28 !s108 1461244272.000000
+Z28 !s108 1461245097.000000
 Z29 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/clock_multiplier.vhd|
 Z30 !s107 /home/t/virtual-buttons/hdl/clock_multiplier.vhd|
 !i113 1
@@ -132,7 +132,7 @@ VWIY=77DiGR9<NZ7dX=Xnm0
 !s100 nQ^3hCON22cUC<Rgbm9Ui3
 R7
 32
-R8
+R27
 !i10b 1
 R28
 R29
@@ -151,7 +151,7 @@ VZU<Uzk;7l@^8X[kFana6N3
 !s100 S]LmVKBVSViMT2K0Nc3a^0
 R7
 32
-R21
+R8
 !i10b 1
 R9
 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/constants.vhd|
@@ -173,7 +173,7 @@ VAg;bczM^9fP>f=Xf8=T7Q1
 !s100 ETE<gn8[3zj6`YKH[4U350
 R7
 32
-R21
+R8
 !i10b 1
 R9
 Z34 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/counter.vhd|
@@ -192,7 +192,7 @@ VM;g1oKbZ4C`R_4PYdE2J61
 !s100 mDH@GAaAB5dXoX9WNW0e_1
 R7
 32
-R21
+R8
 !i10b 1
 R9
 R34
@@ -221,7 +221,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 Z41 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/rtl-debugging/debug_contents_count.vhd|
 Z42 !s107 /home/t/virtual-buttons/hdl/rtl-debugging/debug_contents_count.vhd|
 !i113 1
@@ -245,7 +245,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 R41
 R42
 !i113 1
@@ -275,7 +275,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 Z49 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/rtl-debugging/debug_light_generator.vhd|
 Z50 !s107 /home/t/virtual-buttons/hdl/rtl-debugging/debug_light_generator.vhd|
 !i113 1
@@ -304,7 +304,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 R49
 R50
 !i113 1
@@ -328,7 +328,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 Z53 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/buttons/many_buttons.vhd|
 Z54 !s107 /home/t/virtual-buttons/hdl/buttons/many_buttons.vhd|
 !i113 1
@@ -350,7 +350,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 R53
 R54
 !i113 1
@@ -375,7 +375,7 @@ V?8a@>Lkn=bNbM9Dln1D;>1
 !s100 KMLffjkU^`=:0SaYYWLDE2
 R7
 33
-R8
+R27
 !i10b 1
 R28
 Z57 !s90 -reportprogress|300|-2008|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/sinewave/many_sines.vhd|
@@ -400,7 +400,7 @@ Vll64Hzjb@koUDa77MJL=]2
 !s100 64=b^ogUT;P_g6eAUG>h10
 R7
 33
-R8
+R27
 !i10b 1
 R28
 R57
@@ -409,7 +409,7 @@ R58
 R59
 R13
 Emidi_decoder
-Z61 w1461244269
+Z61 w1461244500
 R44
 R45
 R46
@@ -430,7 +430,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 Z64 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/midi/midi_decoder.vhd|
 Z65 !s107 /home/t/virtual-buttons/hdl/midi/midi_decoder.vhd|
 !i113 1
@@ -455,7 +455,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 R64
 R65
 !i113 1
@@ -480,7 +480,7 @@ VM;l>9fb_<zO9@XBbz=h7O0
 !s100 NeZR;92K^3Y3h[3[hLm1M3
 R7
 32
-R8
+R27
 !i10b 1
 R28
 Z72 !s90 -reportprogress|300|-work|virtual_button_lib|../midi_decoder_tb.vhd|
@@ -509,7 +509,7 @@ Z77 VRVLQ_f7gzC`YOa2dZj7k61
 Z78 !s100 VYK7iO=?B]<?V>03SW>Mh3
 R7
 32
-R8
+R27
 !i10b 1
 R28
 R72
@@ -537,7 +537,7 @@ R7
 b1
 R8
 !i10b 1
-R28
+R9
 Z82 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/midi/midi_pkg.vhd|
 Z83 !s107 /home/t/virtual-buttons/hdl/midi/midi_pkg.vhd|
 !i113 1
@@ -559,7 +559,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 R82
 R83
 !i113 1
@@ -567,7 +567,7 @@ R12
 R13
 R14
 Emidi_ram
-Z84 w1461243250
+Z84 w1461245074
 R16
 R17
 R18
@@ -579,27 +579,27 @@ Z85 8/home/t/virtual-buttons/hdl/midi/midi_ram.vhd
 Z86 F/home/t/virtual-buttons/hdl/midi/midi_ram.vhd
 l0
 L14
-VU<0PaC_9`7El<R[8Bc8FK0
-!s100 T9aj@kA>7K7f@f0lDiAAO2
+VjCL:Y6:P=RXb2NGN<>nCe0
+!s100 2^5eZ;6Mj2m?a[n9]^[LZ0
 R7
 32
 R8
 !i10b 1
-R28
+R9
 Z87 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/midi/midi_ram.vhd|
 Z88 !s107 /home/t/virtual-buttons/hdl/midi/midi_ram.vhd|
 !i113 1
 R12
 R13
 Artl
-R24
+R23
 R16
 R17
 R18
 R1
 R2
 R3
-Z89 DEx4 work 8 midi_ram 0 22 U<0PaC_9`7El<R[8Bc8FK0
+Z89 DEx4 work 8 midi_ram 0 22 jCL:Y6:P=RXb2NGN<>nCe0
 l49
 L36
 V7RSm54RzELZj9?=N]c2h23
@@ -608,14 +608,14 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 R87
 R88
 !i113 1
 R12
 R13
 Emidi_top
-Z90 w1461243789
+Z90 w1461245002
 R44
 R45
 R46
@@ -634,9 +634,9 @@ VME=W;LhaXEo1ME86YFPQ]2
 !s100 _Ff_J]l4BVT<UCHMgDmQl0
 R7
 32
-R8
+R27
 !i10b 1
-R28
+R9
 Z93 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/midi/midi_top.vhd|
 Z94 !s107 /home/t/virtual-buttons/hdl/midi/midi_top.vhd|
 !i113 1
@@ -661,9 +661,9 @@ V>FGQ8DjKjebZ`<`fDB`LS0
 !s100 SR97:4nUDnYGMah:oa>jE1
 R7
 32
-R8
+R27
 !i10b 1
-R28
+R9
 R93
 R94
 !i113 1
@@ -683,7 +683,7 @@ VPH6cKX:oFV^?Z=W;KENcG3
 !s100 l?lMKSQ[M;mZ49CD<Ya8F1
 R7
 32
-R8
+R27
 !i10b 1
 R28
 Z98 !s90 -reportprogress|300|-work|virtual_button_lib|../../spi/mock_spi_master.vhd|
@@ -702,7 +702,7 @@ Vg`iW9z79?BRRdT[GzahB>3
 !s100 QU`H>i0@?N`RTXh2`7``M0
 R7
 32
-R8
+R27
 !i10b 1
 R28
 R98
@@ -727,7 +727,7 @@ VXJ@6o6M`XUOWQcAblP4n]3
 !s100 >>kbU9=mf[c^eZ7Qm6Kmf2
 R7
 32
-R21
+R8
 !i10b 1
 R9
 Z103 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/spi/ram.vhd|
@@ -749,7 +749,7 @@ VmBmLWHYN3U[nDk@aVJKZ;2
 !s100 Y9UmX<]bi]Z8NYBA@MELX3
 R7
 32
-R21
+R8
 !i10b 1
 R9
 R103
@@ -776,7 +776,7 @@ R7
 b1
 R8
 !i10b 1
-R28
+R9
 Z107 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/sinewave/sine_lut_pkg.vhd|
 Z108 !s107 /home/t/virtual-buttons/hdl/sinewave/sine_lut_pkg.vhd|
 !i113 1
@@ -797,7 +797,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 R107
 R108
 !i113 1
@@ -822,7 +822,7 @@ V:b2keG:E305OWn>I_6[:g1
 !s100 T]7]6`1mzG[fo_fR26fDb0
 R7
 32
-R8
+R27
 !i10b 1
 R28
 Z111 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/sinewave/sine_rom.vhd|
@@ -845,7 +845,7 @@ Vd<ZNKYRz:5aJ`ZZ^N[@U01
 !s100 0DH_l>`[RaDfIE6G_k;X@0
 R7
 32
-R8
+R27
 !i10b 1
 R28
 R111
@@ -871,7 +871,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 Z115 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/buttons/single_button.vhd|
 Z116 !s107 /home/t/virtual-buttons/hdl/buttons/single_button.vhd|
 !i113 1
@@ -892,7 +892,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 R115
 R116
 !i113 1
@@ -914,7 +914,7 @@ VeWcbAL=[f7LWb]C8TI`3K3
 !s100 I[G;ZE7:YbCOeh01SP=]j0
 R7
 32
-R21
+R8
 !i10b 1
 R9
 Z120 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/spi/spi_rx.vhd|
@@ -935,7 +935,7 @@ VQgNja5YJ>A`H9GR=WekLG1
 !s100 A67:hcfEKl49P^=WOAHHT2
 R7
 32
-R21
+R8
 !i10b 1
 R9
 R120
@@ -959,7 +959,7 @@ Vb0o5E=@TGP^WmO]YmbE_G1
 !s100 od`9VX>bO=dEKWJYT0UO33
 R7
 32
-R21
+R8
 !i10b 1
 R9
 Z125 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/spi/spi_top.vhd|
@@ -971,7 +971,7 @@ Artl
 DEx18 virtual_button_lib 6 spi_rx 0 22 eWcbAL=[f7LWb]C8TI`3K3
 DEx18 virtual_button_lib 21 spi_tx_ram_controller 0 22 62VdimznQC6i@^EJ=<dei1
 R18
-R25
+R24
 DEx18 virtual_button_lib 6 spi_tx 0 22 0>Pzk7hMJEQ@bUl7ME=@11
 R17
 R16
@@ -985,7 +985,7 @@ Vl84[AbO`keHS:1TXc64A?0
 !s100 _^3;n2ACPWISoDT@k<Goi1
 R7
 32
-R21
+R8
 !i10b 1
 R9
 R125
@@ -1008,7 +1008,7 @@ V0>Pzk7hMJEQ@bUl7ME=@11
 !s100 5ITQhT1fcf3^eV3Wf9Idl3
 R7
 32
-R21
+R8
 !i10b 1
 R9
 Z130 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/spi/spi_tx.vhd|
@@ -1028,7 +1028,7 @@ VJX7i_PhKeK@I1Hfd3mX:>0
 !s100 LA:AhMGI3kW7c:FHfWz6J1
 R7
 32
-R21
+R8
 !i10b 1
 R9
 R130
@@ -1052,7 +1052,7 @@ V62VdimznQC6i@^EJ=<dei1
 !s100 Y7DnXV`ZMnEKhT?11`jUM2
 R7
 32
-R21
+R8
 !i10b 1
 R9
 Z135 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/spi/spi_tx_ram_controller.vhd|
@@ -1073,7 +1073,7 @@ Vl5nM1f5XC>[gmgVcoMeeS1
 !s100 QA8g64n0TFD85cl?89^1n3
 R7
 32
-R21
+R8
 !i10b 1
 R9
 R135
@@ -1095,7 +1095,7 @@ Vl1MfZB<V3l>00>HkVaM<10
 !s100 1[j<SOmcP0M0QLSiE3XUi3
 R7
 32
-R21
+R8
 !i10b 1
 R9
 Z140 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/strobe_to_square.vhd|
@@ -1114,7 +1114,7 @@ VmGndQz`z@[XcGLk>Y4XXJ1
 !s100 zFebJ`EZ5JV@mfCEcXK103
 R7
 32
-R21
+R8
 !i10b 1
 R9
 R140
@@ -1142,7 +1142,7 @@ VzU]J=Q`BcVJHN;Y3UjGVU3
 !s100 >Fi0TgU]68]]kjBmF7I[=0
 R7
 32
-R8
+R27
 !i10b 1
 R28
 Z145 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/top.vhd|
@@ -1176,7 +1176,7 @@ V]CjgVUCb[O310?ZEm=a4G2
 !s100 S5O0;X;[0AMI]ID>oL8DK0
 R7
 32
-R8
+R27
 !i10b 1
 R28
 R145
@@ -1195,7 +1195,7 @@ VX7T_hKQU7BCCN`V6I7OCI1
 !s100 WmzdPU_;mR4oCjI[E;3Fe0
 R7
 32
-R21
+R8
 !i10b 1
 R9
 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/uart/uart_constants.vhd|
@@ -1218,7 +1218,7 @@ VIOZV]LIB:An1SRLHXj>Tg0
 R7
 32
 b1
-R8
+R27
 !i10b 1
 R28
 Z151 !s90 -reportprogress|300|-work|virtual_button_lib|../../uart/uart_functions.vhd|
@@ -1237,7 +1237,7 @@ VK8OaMchQlVg=`WzmfLc[73
 !s100 6i@c63B<z5OBkH47lCRoz0
 R7
 32
-R8
+R27
 !i10b 1
 R28
 R151
@@ -1263,7 +1263,7 @@ VJbPSUkmhDffJkh]Rl6j:Z3
 !s100 ^`X?S`DCK1`GCL5OMcn9S1
 R7
 32
-R21
+R8
 !i10b 1
 R9
 Z155 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/uart/uart_rx.vhd|
@@ -1285,7 +1285,7 @@ ViGTWblMUjNd97ISDAHELz1
 !s100 UJl@TCnJUo1ZFoQYooI7A3
 R7
 32
-R21
+R8
 !i10b 1
 R9
 R155
@@ -1309,7 +1309,7 @@ VRIK>29]c3_V4YXNj<8;RU2
 !s100 ?B_E9JUTm?h7Vce@a7]OQ0
 R7
 32
-R21
+R8
 !i10b 1
 R9
 Z159 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/uart/uart_top.vhd|
@@ -1333,7 +1333,7 @@ V_i=g:@8]^o>[XY<?C7InT2
 !s100 oPjVCCj`H6>GcUigg66NX3
 R7
 32
-R21
+R8
 !i10b 1
 R9
 R159
@@ -1357,7 +1357,7 @@ VYTkHONk8cJFI_J9`XQin^3
 !s100 z:e8>dn<lR[AACWhHGV=82
 R7
 32
-R21
+R8
 !i10b 1
 R9
 Z164 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/uart/uart_tx.vhd|
@@ -1378,7 +1378,7 @@ Vif5d0QbWQ51A6m[3NeWSF0
 !s100 a6MP7B^mMP38ZA?kShAMO3
 R7
 32
-R21
+R8
 !i10b 1
 R9
 R164
@@ -1400,7 +1400,7 @@ VhlHSj^C5Y_bRQg9Gk7hnK3
 R7
 32
 b1
-R21
+R8
 !i10b 1
 R9
 Z169 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/utils.vhd|
@@ -1418,7 +1418,7 @@ VMeeYP^PKVaYQGRYTBzl5H2
 !s100 S8A:Dc?h8Y:jd@G3b^0<U2
 R7
 32
-R21
+R8
 !i10b 1
 R9
 R169
@@ -1444,7 +1444,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/ws2812/ws2812_constant_colours.vhd|
 !s107 /home/t/virtual-buttons/hdl/ws2812/ws2812_constant_colours.vhd|
 !i113 1
@@ -1467,7 +1467,7 @@ R7
 b1
 R8
 !i10b 1
-R28
+R9
 Z173 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/ws2812/ws2812_data.vhd|
 Z174 !s107 /home/t/virtual-buttons/hdl/ws2812/ws2812_data.vhd|
 !i113 1
@@ -1486,7 +1486,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 R173
 R174
 !i113 1
@@ -1513,7 +1513,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 Z177 !s90 -reportprogress|300|-work|virtual_button_lib|/home/t/virtual-buttons/hdl/ws2812/ws2812_drv.vhd|
 Z178 !s107 /home/t/virtual-buttons/hdl/ws2812/ws2812_drv.vhd|
 !i113 1
@@ -1536,7 +1536,7 @@ R7
 32
 R8
 !i10b 1
-R28
+R9
 R177
 R178
 !i113 1

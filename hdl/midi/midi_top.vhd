@@ -23,12 +23,12 @@ entity midi_top is
 
     enable_decoder : out std_logic;
     errors         : out errors_t;
-    contents_count : out natural range 0 to midi_file_rx_bram_depth - 1
+    contents_count : out natural range 0 to midi_file_rx_bram_depth
     );
 end;
 
 architecture rtl of midi_top is
-  signal contents_count_int : natural range 0 to midi_file_rx_bram_depth - 1;
+  signal contents_count_int : natural range 0 to midi_file_rx_bram_depth;
   signal midi_nos_int  : midi_note_arr_t;
   signal read_addr     : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
   signal midi_ram_data : std_logic_vector(7 downto 0);

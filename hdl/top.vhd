@@ -57,7 +57,7 @@ architecture rtl of top is
   signal spi_mcu_to_fpga_data         : std_logic_vector(spi_word_length - 1 downto 0);
   signal spi_fpga_to_mcu_data         : std_logic_vector(15 downto 0);
   signal spi_enqueue_fpga_to_mcu_data : std_logic;
-  signal spi_contents_count           : integer range 0 to spi_tx_ram_depth - 1;
+  signal spi_contents_count           : integer range 0 to spi_tx_ram_depth;
   signal spi_tx_buffer_full           : std_logic;
 
   signal enable_spi_tx : std_logic;
@@ -73,7 +73,7 @@ architecture rtl of top is
   -- midi ram signals
   signal midi_ram_empty          : std_logic;
   signal midi_ram_full           : std_logic;
-  signal midi_ram_contents_count : natural range 0 to midi_file_rx_bram_depth - 1;
+  signal midi_ram_contents_count : natural range 0 to midi_file_rx_bram_depth;
 begin
 
   uart_top_1 : entity virtual_button_lib.uart_top
