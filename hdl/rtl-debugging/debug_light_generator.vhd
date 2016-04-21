@@ -7,6 +7,7 @@ use virtual_button_lib.constants.all;
 use virtual_button_lib.button_pkg.all;
 use virtual_button_lib.ws2812_data.all;
 use virtual_button_lib.ws2812_constant_colours.all;
+use virtual_button_lib.midi_pkg.all;
 
 entity debug_light_generator is
   generic(
@@ -17,16 +18,14 @@ entity debug_light_generator is
     ctrl : in ctrl_t;
 
     spi_tx_buffer_full : in std_logic;
-    contents_count     : in integer range 0 to spi_tx_ram_depth;
+    contents_count     : in integer range 0 to spi_tx_ram_depth - 1;
     buttons            : in button_arr;
     cs_n               : in std_logic;
     enable_spi_tx      : in std_logic;
-    mosi               : in std_logic;
-    miso               : in std_logic;
 
-    midi_ram_empty          : in std_logic;
-    midi_ram_full           : in std_logic;
-    midi_ram_contents_count : in integer range 0 to midi_file_rx_bram_depth;
+    midi_ram_contents_count : in integer range 0 to midi_file_rx_bram_depth - 1;
+    enable_decoder          : in std_logic;
+    errors                  : in errors_t;
 
     run_counter_dbg : in std_logic;
 
@@ -40,7 +39,7 @@ architecture rtl of debug_light_generator is
   signal ws2812_data    : ws2812_array_t(0 to num_leds - 1);
   signal current_ws2812 : ws2812_t;
 
-  signal contents_count_debug      : ws2812_array_t(0 to 7);
+  signal contents_count_debug          : ws2812_array_t(0 to 7);
   signal midi_ram_contents_count_debug : ws2812_array_t(0 to 7);
 
   -- whenever the tx buffer fills all the way up, display a light for 0.5 sec.
@@ -67,52 +66,65 @@ begin
 
       if ctrl.reset_n = '0' then
         ws2812_data(0) <= ws2812_red;
-      elsif buttons(k).toggle = '1' then
-        ws2812_data(0) <= ws2812_clear;
-      elsif buttons(g).pressed = '1' then
-        ws2812_data(0) <= ws2812_green;
-      elsif buttons(b).pressed = '1' then
-        ws2812_data(0) <= ws2812_blue;
-      end if;
-
-      if mosi = '1' and miso = '1' then
-        ws2812_data(7) <= ws2812_blue;
-      elsif miso = '1' then
-        ws2812_data(7) <= ws2812_purple;
-      elsif mosi = '1' then
-        ws2812_data(7) <= ws2812_green;
-      elsif cs_n = '0' then
-        ws2812_data(7) <= ws2812_green;
       else
-        ws2812_data(7) <= ws2812_clear;
+        ws2812_data(0) <= ws2812_green;
       end if;
-
-
 
       -- debug spi transmitter
       if held_spi_tx_buffer_full = '1' then
-        ws2812_data(8) <= ws2812_red;
+        ws2812_data(1) <= ws2812_red;
       elsif enable_spi_tx = '1' then
-        ws2812_data(8) <= ws2812_green;
+        ws2812_data(1) <= ws2812_green;
       else
-        ws2812_data(8) <= ws2812_clear;
+        ws2812_data(1) <= ws2812_blue;
       end if;
 
       if spi_tx_buffer_full = '1' then
-        ws2812_data(9) <= ws2812_red;
+        ws2812_data(2) <= ws2812_red;
       else
-        ws2812_data(9) <= ws2812_blue;
+        ws2812_data(2) <= ws2812_blue;
       end if;
 
-      ws2812_data(16 to 23) <= contents_count_debug;
-
-      ws2812_data(24 to 31) <= midi_ram_contents_count_debug;
-
-      if midi_ram_empty = '1' then
-        ws2812_data(33) <= ws2812_green;
-      elsif midi_ram_full = '1' then
-        ws2812_data(33) <= ws2812_blue;
+      -- Monitor SPI behaviour
+      if cs_n = '0' then
+        ws2812_data(7) <= ws2812_green;
+      else
+        ws2812_data(7) <= ws2812_blue;
       end if;
+
+
+      ws2812_data(8 to 15) <= contents_count_debug;
+
+      ws2812_data(16 to 23) <= midi_ram_contents_count_debug;
+
+
+      if enable_decoder = '1' then
+        ws2812_data(24) <= ws2812_green;
+      else
+        ws2812_data(24) <= ws2812_blue;
+      end if;
+
+      if enable_decoder = '0' then
+        ws2812_data(25) <= ws2812_blue;
+      else
+        if errors.no_mthd = '1' then
+          ws2812_data(25) <= ws2812_red;
+        else
+          ws2812_data(25) <= ws2812_green;
+        end if;
+      end if;
+
+      if enable_decoder = '0' then
+        ws2812_data(26) <= ws2812_blue;
+      else
+        if errors.not_format_1 = '1' then
+          ws2812_data(26) <= ws2812_red;
+        else
+          ws2812_data(26) <= ws2812_green;
+        end if;
+      end if;
+
+
 
 
       -- uart rx run_counter

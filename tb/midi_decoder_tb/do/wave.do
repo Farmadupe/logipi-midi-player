@@ -20,10 +20,15 @@ add wave -noupdate -label errors /midi_decoder_tb/top_1/midi_top_1/midi_decoder_
 add wave -noupdate -label header_data -radix unsigned /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/header_data
 add wave -noupdate -label midi_ram_data -radix ascii /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/midi_ram_data
 add wave -noupdate -label midi_ram_data -radix unsigned /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/midi_ram_data
+add wave -noupdate -expand -group chunky -label chunk_is_mtrk /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_is_mtrk
+add wave -noupdate -expand -group chunky -label chunk_addr -radix unsigned /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_addr
+add wave -noupdate -expand -group chunky -label chunk_length -radix unsigned /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_length
+add wave -noupdate -expand -group chunky -label chunk_no -radix unsigned /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_no
+add wave -noupdate -expand -group chunky -radix unsigned -childformat {{/midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(0) -radix unsigned} {/midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(1) -radix unsigned} {/midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(2) -radix unsigned} {/midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(3) -radix unsigned} {/midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(4) -radix unsigned} {/midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(5) -radix unsigned} {/midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(6) -radix unsigned} {/midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(7) -radix unsigned} {/midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(8) -radix unsigned} {/midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(9) -radix unsigned}} -expand -subitemconfig {/midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(0) {-radix unsigned} /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(1) {-radix unsigned} /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(2) {-radix unsigned} /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(3) {-radix unsigned} /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(4) {-radix unsigned} /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(5) {-radix unsigned} /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(6) {-radix unsigned} /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(7) {-radix unsigned} /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(8) {-radix unsigned} /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data(9) {-radix unsigned}} /midi_decoder_tb/top_1/midi_top_1/midi_decoder_1/chunk_data
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {8299350000 ps} 0}
+WaveRestoreCursors {{Cursor 1} {8300610000 ps} 0}
 quietly wave cursor active 1
-configure wave -namecolwidth 456
+configure wave -namecolwidth 229
 configure wave -valuecolwidth 100
 configure wave -justifyvalue left
 configure wave -signalnamewidth 0
@@ -37,4 +42,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ms
 update
-WaveRestoreZoom {8299067288 ps} {8299554688 ps}
+WaveRestoreZoom {8290529224 ps} {8306708210 ps}

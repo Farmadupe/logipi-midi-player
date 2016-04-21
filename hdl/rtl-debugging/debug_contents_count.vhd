@@ -29,7 +29,7 @@ begin
       constant threshold : integer range 0 to spi_tx_ram_depth := contents_per_led * i;
     begin
       if rising_edge(ctrl.clk) then
-        if contents_count > threshold then
+        if contents_count > threshold or contents_count = spi_tx_ram_depth then
           contents_count_debug(i - 1) <= debug_colour;
         else
           contents_count_debug(i - 1) <= ws2812_clear;

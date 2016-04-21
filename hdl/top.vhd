@@ -57,22 +57,23 @@ architecture rtl of top is
   signal spi_mcu_to_fpga_data         : std_logic_vector(spi_word_length - 1 downto 0);
   signal spi_fpga_to_mcu_data         : std_logic_vector(15 downto 0);
   signal spi_enqueue_fpga_to_mcu_data : std_logic;
-  signal spi_contents_count           : integer range 0 to spi_tx_ram_depth;
+  signal spi_contents_count           : integer range 0 to spi_tx_ram_depth - 1;
   signal spi_tx_buffer_full           : std_logic;
 
   signal enable_spi_tx : std_logic;
 
   --midi signals
-  signal pcm_out     : signed(15 downto 0);
-  signal new_pcm_out : std_logic;
-
+  signal pcm_out        : signed(15 downto 0);
+  signal new_pcm_out    : std_logic;
+  signal enable_decoder : std_logic;
+  signal errors         : errors_t;
 
   signal midi_nos : midi_note_arr_t;
 
   -- midi ram signals
   signal midi_ram_empty          : std_logic;
   signal midi_ram_full           : std_logic;
-  signal midi_ram_contents_count : natural range 0 to midi_file_rx_bram_depth;
+  signal midi_ram_contents_count : natural range 0 to midi_file_rx_bram_depth - 1;
 begin
 
   uart_top_1 : entity virtual_button_lib.uart_top
@@ -145,6 +146,8 @@ begin
       midi_nos       => midi_nos,
       empty          => midi_ram_empty,
       full           => midi_ram_full,
+      enable_decoder => enable_decoder,
+      errors         => errors,
       contents_count => midi_ram_contents_count);
 
 
@@ -160,12 +163,10 @@ begin
       buttons            => buttons,
       cs_n               => cs_n,
       enable_spi_tx      => enable_spi_tx,
-      mosi               => mosi,
-      miso               => miso_int,
 
-      midi_ram_empty          => midi_ram_empty,
-      midi_ram_full           => midi_ram_full,
       midi_ram_contents_count => midi_ram_contents_count,
+      enable_decoder          => enable_decoder,
+      errors                  => errors,
 
       run_counter_dbg => run_counter_dbg,
 
@@ -173,9 +174,9 @@ begin
       );
 
 
-    -----------------------------------------------------------------------------
+  -----------------------------------------------------------------------------
 
-    ctrl.clk <= clk_50mhz;
+  ctrl.clk <= clk_50mhz;
 
   resetting : process (ctrl.clk) is
   begin

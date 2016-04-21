@@ -96,6 +96,7 @@ begin
 
 
     file_open(midi_file, "deck.mid", read_mode);
+    --file_open(midi_file, "zeroes_file", read_mode);
 
     while not endfile(midi_file) loop
       if remaining_bytes /= 0 then

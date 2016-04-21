@@ -120,7 +120,7 @@ package midi_pkg is
 
   -- This table holds the rates at which the sine LUTs must be indexed through
   -- to output sine waves at the correct frequency.
-  type stride_arr_t is array (midi_note_t'low to midi_note_t'high) of integer;  
+  type stride_arr_t is array (midi_note_t'low to midi_note_t'high) of integer;
   function calc_midi_note_strides return stride_arr_t;
 
   -- I can't remember how I derived this exact value. See reasoning in the
@@ -132,6 +132,14 @@ package midi_pkg is
   -- TODO: this is very implementation specific. Sounds like it should not
   -- beling here.
   type midi_note_arr_t is array(0 to num_sines - 1) of midi_note_t;
+
+
+  -----------------------------------------------------------------------------
+  -- Midi decoder errors
+  type errors_t is record
+    no_mthd      : std_logic;
+    not_format_1 : std_logic;
+  end record;
 end;
 
 package body midi_pkg is

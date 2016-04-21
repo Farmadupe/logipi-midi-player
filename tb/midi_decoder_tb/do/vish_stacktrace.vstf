@@ -114,3 +114,20 @@
 # 63   0x09ab6223: '<unknown (@0x9ab6223)>'
 # 64   0x09ab84a3: '<unknown (@0x9ab84a3)>'
 # 65   0xf7d867fb: '<unknown (@0xf7d867fb)>'
+# Current time Tue Apr 19 17:58:22 2016
+# ModelSim Microsemi Stack Trace
+# Program = vish
+# Id = "10.4c"
+# Version = "2015.07"
+# Date = "Aug 12 2015"
+# Platform = linuxpe
+# 0    0x082d6018: '<unknown (@0x82d6018)>'
+# 1    0x084a4ded: '<unknown (@0x84a4ded)>'
+# 2    0x084eda0a: '<unknown (@0x84eda0a)>'
+# 3    0x084f63ac: '<unknown (@0x84f63ac)>'
+# 4    0x084a6f6c: 'TclEvalObjEx + 0x6c' in '/mnt/Xilinx/Libero/Model/modeltech/linuxacoem/vish'
+# 5    0x084a7406: 'Tcl_EvalObjEx + 0x36' in '/mnt/Xilinx/Libero/Model/modeltech/linuxacoem/vish'
+# 6    0xf780eeac: 'Itcl_EvalMemberCode + 0x3cc' in '/mnt/Xilinx/Libero/Model/modeltech/linuxacoem/itcl3.4/libitcl3.4.so'
+# 7    0x0ada2c6b: '<unknown (@0xada2c6b)>'
+# 8    0x0adb85f3: '<unknown (@0xadb85f3)>'
+# 9    0x7254745e: '<unknown (@0x7254745e)>'

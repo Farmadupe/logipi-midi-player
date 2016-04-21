@@ -7,6 +7,7 @@ vcom -work virtual_button_lib ../../spi/mock_spi_master.vhd
 vcom -work virtual_button_lib ../midi_decoder_tb.vhd
 
 file copy -force ../midifiles/deck.mid .
+file copy -force ../midifiles/zeroes_file .
 
 vsim virtual_button_lib.midi_decoder_tb
 

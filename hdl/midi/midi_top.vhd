@@ -17,18 +17,23 @@ entity midi_top is
     enqueue       : in std_logic;
     write_in_data : in std_logic_vector(7 downto 0);
 
-    midi_nos       : out midi_note_arr_t;
-    empty          : out std_logic;
-    full           : out std_logic;
-    contents_count : out natural range 0 to midi_file_rx_bram_depth
+    midi_nos : out midi_note_arr_t;
+    empty    : out std_logic;
+    full     : out std_logic;
+
+    enable_decoder : out std_logic;
+    errors         : out errors_t;
+    contents_count : out natural range 0 to midi_file_rx_bram_depth - 1
     );
 end;
 
 architecture rtl of midi_top is
+  signal contents_count_int : natural range 0 to midi_file_rx_bram_depth - 1;
   signal midi_nos_int  : midi_note_arr_t;
   signal read_addr     : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
   signal midi_ram_data : std_logic_vector(7 downto 0);
 begin
+  contents_count <= contents_count_int;
   midi_nos <= midi_nos_int;
 
   midi_ram_1 : entity work.midi_ram
@@ -43,15 +48,18 @@ begin
       read_out_data  => midi_ram_data,
       empty          => empty,
       full           => full,
-      contents_count => contents_count);
+      contents_count => contents_count_int);
 
   midi_decoder_1 : entity work.midi_decoder
     port map (
-      ctrl          => ctrl,
-      buttons       => buttons,
-      read_addr     => read_addr,
-      midi_ram_data => midi_ram_data,
-      midi_no_1     => midi_nos_int(2));
+      ctrl           => ctrl,
+      buttons        => buttons,
+      read_addr      => read_addr,
+      midi_ram_data  => midi_ram_data,
+      contents_count => contents_count_int,
+      enable_decoder => enable_decoder,
+      errors         => errors,
+      midi_no_1      => midi_nos_int(2));
 
   choose_midi_no : process(ctrl.clk) is
   begin
