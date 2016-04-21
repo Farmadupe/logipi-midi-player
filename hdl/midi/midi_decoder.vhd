@@ -21,7 +21,8 @@ entity midi_decoder is
     contents_count : in  natural range 0 to midi_file_rx_bram_depth;
     enable_decoder : out std_logic;
     errors         : out errors_t;
-    midi_no_1      : out midi_note_t
+    midi_no_1      : out midi_note_t;
+    playing_en : out std_logic
     );
 end;
 
@@ -135,6 +136,8 @@ begin
         chunk_addr <= to_unsigned(14, chunk_addr'length);
 
         chunk_length <= to_unsigned(0, chunk_length'length);
+
+        playing_en <= '0';
       else
         case state is
           when initial_wait =>
@@ -323,7 +326,9 @@ begin
 
 
           when done =>
-            null;
+            if errors_int.no_mthd = '0' and errors_int.not_format_1 = '0' and chunk_no > 1 then
+              playing_en <= '1';
+            end if;
 
         end case;
       end if;

@@ -48,7 +48,7 @@ architecture rtl of spi_top is
   signal dequeue            : std_logic;
   signal empty              : std_logic;
 
-  signal contents_count_int           : integer range 0 to tx_ram_depth
+  signal contents_count_int           : integer range 0 to tx_ram_depth;
   signal new_mcu_to_fpga_data_from_rx : std_logic;
   signal remaining_bytes              : integer range 0 to 255;
   signal mcu_to_fpga_data_int         : std_logic_vector(7 downto 0);
