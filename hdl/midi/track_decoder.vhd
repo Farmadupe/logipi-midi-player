@@ -45,6 +45,9 @@ architecture rtl of track_decoder is
     read_status_3,
 
     dispatch_event,
+    dispatch_meta_1,
+    dispatch_meta_2,
+    dispatch_meta_3,
 
     skip_over_meta_event_1,
     skip_over_meta_event_2,
@@ -65,13 +68,14 @@ architecture rtl of track_decoder is
 
   signal status         : std_logic_vector(7 downto 0);
   signal running_status : std_logic;
-
   signal current_track : integer range 1 to max_num_tracks - 1;
 
   -----------------------------------------------------------------------------
   -- Enumeration of known events
   constant meta_event    : std_logic_vector(7 downto 0) := x"FF";
   constant note_on_event : std_logic_vector(3 downto 0) := x"9";
+  constant end_of_track  : std_logic_vector(7 downto 0) := x"2F";
+  constant track_name    : std_logic_vector(7 downto 0) := x"03";
 begin
   fsm : process(ctrl.clk)
     procedure inc_addr is
@@ -155,8 +159,7 @@ begin
 
           when dispatch_event =>
             if status = meta_event then
-              inc_addr;
-              state <= skip_over_meta_event_1;
+              state <= dispatch_meta_1;
             elsif status(7 downto 4) = note_on_event then
 
               state <= read_note_on_1;
@@ -165,6 +168,22 @@ begin
               internals(current_track).unknown_midi_event <= '1';
               state                                       <= error_state;
 
+            end if;
+
+          when dispatch_meta_1 =>
+            inc_addr;
+            state <= dispatch_meta_2;
+
+          when dispatch_meta_2 =>
+            state <= dispatch_meta_3;
+
+          when dispatch_meta_3 =>
+            if midi_ram_data = end_of_track then
+              state <= done;
+            elsif midi_ram_data = track_name then
+              state <= skip_over_meta_event_1;
+            else
+              state <= error_state;
             end if;
 
           when skip_over_meta_event_1 =>
