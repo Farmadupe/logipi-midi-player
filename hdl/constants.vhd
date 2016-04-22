@@ -43,4 +43,9 @@ package constants is
   -- in a frame. Must be less than (256/word size)
   constant spi_tx_max_block_size : integer := 100;
 
+
+  -----------------------------------------------------------------------------
+  -- midi constants
+  -- The maximum number of tracks in a midi file that may be simulataneously decoded.
+  constant max_num_tracks : integer := 10;
 end;

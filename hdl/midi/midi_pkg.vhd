@@ -135,11 +135,18 @@ package midi_pkg is
 
 
   -----------------------------------------------------------------------------
-  -- Midi decoder errors
+  -- Common midi data typres
   type errors_t is record
     no_mthd      : std_logic;
     not_format_1 : std_logic;
   end record;
+
+
+  type chunk_data_t is record
+    base_addr : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
+    length    : unsigned(31 downto 0);
+  end record;
+  type chunk_data_t_arr is array(integer range 0 to max_num_tracks - 1) of chunk_data_t;
 end;
 
 package body midi_pkg is

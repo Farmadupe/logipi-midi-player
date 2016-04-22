@@ -1,5 +1,12 @@
---entity that contains an FSM to decode midi type 1 files such that the FPGA can
---play them
+-- entity that contains an FSM to decode midi type 1 files such that the FPGA can
+-- play them
+--
+-- Determines if a file that has been sent to midi_ram is actually a midi file.
+--
+-- Reads the following data:
+-- * number of tracks
+-- * address and length of each track
+
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -19,10 +26,12 @@ entity midi_decoder is
     read_addr      : out unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0) := (others => '0');
     midi_ram_data  : in  std_logic_vector(7 downto 0);
     contents_count : in  natural range 0 to midi_file_rx_bram_depth;
+    chunk_data     : out chunk_data_t_arr;
+    num_chunks     : out integer range 0 to max_num_tracks - 1;
     enable_decoder : out std_logic;
     errors         : out errors_t;
     midi_no_1      : out midi_note_t;
-    playing_en : out std_logic
+    playing_en     : out std_logic
     );
 end;
 
@@ -81,14 +90,8 @@ architecture rtl of midi_decoder is
   signal header_data_noreg : header_data_t;
 
 
-  constant max_num_tracks : integer := 10;
-  type chunk_data_t is record
-    base_addr : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
-    length    : unsigned(31 downto 0);
-  end record;
-  type chunk_data_t_arr is array(integer range 0 to max_num_tracks - 1) of chunk_data_t;
-  signal chunk_data : chunk_data_t_arr;
-  signal chunk_no   : integer range 0 to max_num_tracks - 1;
+  signal chunk_data_int : chunk_data_t_arr;
+  signal chunk_no       : integer range 0 to max_num_tracks;
 
   signal chunk_is_mtrk : std_logic;
   signal chunk_addr    : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
@@ -98,6 +101,7 @@ begin
   read_addr      <= read_addr_int;
   enable_decoder <= enable_decoder_int;
   errors         <= errors_int;
+  chunk_data     <= chunk_data_int;
 
 
   -- Once the user is sure that the RAM is full of midi data, they will press q
@@ -123,13 +127,13 @@ begin
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
-        read_addr_int <= (others => '0');
-        state         <= initial_wait;
-        errors_int    <= (others => '0');
-        header_data   <= (others => (others => '0'));
-        chunk_is_mtrk <= '1';
-        chunk_no      <= 0;
-        chunk_data    <= (others => (others => (others => '0')));
+        read_addr_int  <= (others => '0');
+        state          <= initial_wait;
+        errors_int     <= (others => '0');
+        header_data    <= (others => (others => '0'));
+        chunk_is_mtrk  <= '1';
+        chunk_no       <= 0;
+        chunk_data_int <= (others => (others => (others => '0')));
 
         -- We set this so that the FSM can read the start of the very first
         -- chunk. The very first chunk is always in address 14.
@@ -312,22 +316,23 @@ begin
           -- on reading.
           when dispatch_end_of_chunk =>
             if chunk_is_mtrk = '1' then
-              chunk_data(chunk_no).length    <= chunk_length;
-              chunk_data(chunk_no).base_addr <= chunk_addr;
-              chunk_no                       <= chunk_no + 1;
+              chunk_data_int(chunk_no).length    <= chunk_length;
+              chunk_data_int(chunk_no).base_addr <= chunk_addr;
+              chunk_no                           <= chunk_no + 1;
             end if;
 
             if chunk_addr + chunk_length + 8 >= contents_count then
               state <= done;
             else
               chunk_addr <= chunk_addr + resize(chunk_length, chunk_addr'length) + 8;
-              state <= init_read_next_chunk;
+              state      <= init_read_next_chunk;
             end if;
 
 
           when done =>
             if errors_int.no_mthd = '0' and errors_int.not_format_1 = '0' and chunk_no > 1 then
               playing_en <= '1';
+              num_chunks <= chunk_no - 1;
             end if;
 
         end case;
