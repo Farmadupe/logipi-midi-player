@@ -30,7 +30,6 @@ entity midi_decoder is
     num_chunks     : out integer range 0 to max_num_tracks - 1;
     enable_decoder : out std_logic;
     errors         : out errors_t;
-    midi_no_1      : out midi_note_t;
     playing_en     : out std_logic
     );
 end;

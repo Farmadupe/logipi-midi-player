@@ -10,13 +10,17 @@ use virtual_button_lib.midi_pkg.all;
 
 entity track_decoder is
   port(
-    ctrl       : in ctrl_t;
-    playing_en : in std_logic;
-    chunk_data : in chunk_data_t_arr;
-    num_chunks : in integer range 0 to max_num_tracks - 1;
+    ctrl            : in  ctrl_t;
+    midi_pulses     : in  midi_pulse_arr;
+    midi_pulse_acks : out midi_pulse_arr;
+    playing_en      : in  std_logic;
+    chunk_data      : in  chunk_data_t_arr;
+    num_chunks      : in  integer range 0 to max_num_tracks - 1;
 
     midi_ram_data : in  std_logic_vector(7 downto 0);
-    read_addr     : out unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0)
+    read_addr     : out unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
+
+    midi_nos : out midi_note_arr_t
     );
 end;
 
@@ -26,8 +30,11 @@ architecture rtl of track_decoder is
   type internals_t is record
     unknown_midi_event : std_logic;
     read_addr          : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
+    status             : std_logic_vector(7 downto 0);
+    running_status     : std_logic;
     midi_no            : midi_note_t;
     volume             : unsigned(7 downto 0);
+    delta_counter      : unsigned(27 downto 0);
   end record;
   type internals_t_arr is array(1 to max_num_tracks - 1) of internals_t;
   signal internals : internals_t_arr;
@@ -39,6 +46,10 @@ architecture rtl of track_decoder is
     init_read_variable_length,
     read_variable_length_wait_read,
     read_variable_length_check_value,
+
+    apply_delta_time,
+    wait_delta_time_and_cede_control,
+    wait_delta_time_and_cede_control_delay,
 
     read_status_1,
     read_status_2,
@@ -66,9 +77,8 @@ architecture rtl of track_decoder is
   signal variable_length : unsigned(27 downto 0);
   signal delta_time      : unsigned(27 downto 0);
 
-  signal status         : std_logic_vector(7 downto 0);
-  signal running_status : std_logic;
   signal current_track : integer range 1 to max_num_tracks - 1;
+
 
   -----------------------------------------------------------------------------
   -- Enumeration of known events
@@ -83,25 +93,42 @@ begin
       internals(current_track).read_addr <= internals(current_track).read_addr + 1;
     end;
 
+    procedure increment_current_track is
+    begin
+      if current_track = num_chunks then
+        current_track <= 1;
+      else
+        current_track <= current_track + 1;
+      end if;
+    end;
+
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
-        internals <= (others =>
-                      (read_addr          => (others => '0'),
-                       unknown_midi_event => '0',
-                       midi_no            => midi_note_t'low,
-                       volume             => (others => '0')
-                       ));
+        internals <= (
+          others               => (
+            read_addr          => (others => '0'),
+            status             => (others => '0'),
+            running_status     => '0',
+            unknown_midi_event => '0',
+            midi_no            => midi_note_t'low,
+            volume             => (others => '0'),
+            delta_counter      => (others => '0')
+            ));
         state        <= wait_en;
         return_state <= error_state;
 
         variable_length <= (others => '0');
         delta_time      <= (others => '0');
 
-        status         <= (others => '0');
-        running_status <= '0';
+
 
         current_track <= 1;
+
+        for i in 1 to max_num_tracks - 1 loop
+          midi_pulse_acks(i) <= '0';
+        end loop;
+
       else
         case state is
           when wait_en =>
@@ -114,7 +141,7 @@ begin
               internals(i).read_addr <= chunk_data(i).base_addr + 8;
             end loop;
             state        <= init_read_variable_length;
-            return_state <= read_status_1;
+            return_state <= apply_delta_time;
 
 
 
@@ -135,12 +162,32 @@ begin
               state <= return_state;
             end if;
 
+          when apply_delta_time =>
+            internals(current_track).delta_counter <= variable_length;
+            state                                  <= wait_delta_time_and_cede_control;
+
+          when wait_delta_time_and_cede_control =>
+            midi_pulse_acks(current_track) <= '0';
+
+            if internals(current_track).delta_counter = 0 then
+              state <= read_status_1;
+            elsif midi_pulses(current_track) = '1' then
+              internals(current_track).delta_counter <= internals(current_track).delta_counter - 1;
+              midi_pulse_acks(current_track)         <= '1';
+              state                                  <= wait_delta_time_and_cede_control_delay;
+            else
+              increment_current_track;
+            end if;
+
+          -- This state prevents the delta counters from accidentally double
+          -- decrementing.
+          when wait_delta_time_and_cede_control_delay =>
+            state <= wait_delta_time_and_cede_control;
 
 
           when read_status_1 =>
             inc_addr;
-            delta_time <= variable_length;
-            state      <= read_status_2;
+            state <= read_status_2;
 
           when read_status_2 =>
             state <= read_status_3;
@@ -148,19 +195,19 @@ begin
           when read_status_3 =>
             --here we implement the running status
             if midi_ram_data(7) = '1' then
-              status         <= midi_ram_data;
-              running_status <= '0';
+              internals(current_track).status         <= midi_ram_data;
+              internals(current_track).running_status <= '0';
             else
-              running_status <= '1';
+              internals(current_track).running_status <= '1';
             end if;
             state <= dispatch_event;
 
 
 
           when dispatch_event =>
-            if status = meta_event then
+            if internals(current_track).status = meta_event then
               state <= dispatch_meta_1;
-            elsif status(7 downto 4) = note_on_event then
+            elsif internals(current_track).status(7 downto 4) = note_on_event then
 
               state <= read_note_on_1;
 
@@ -195,11 +242,13 @@ begin
             internals(current_track).read_addr <= internals(current_track).read_addr + 1 +
                                                   resize(variable_length, read_addr_length);
             state        <= init_read_variable_length;
-            return_state <= read_status_1;
+            return_state <= apply_delta_time;
+
+
 
 
           when read_note_on_1 =>
-            if running_status = '0' then
+            if internals(current_track).running_status = '0' then
               inc_addr;
             end if;
             state <= read_note_on_2;
@@ -216,10 +265,11 @@ begin
             inc_addr;
             internals(current_track).volume <= unsigned(midi_ram_data);
             state                           <= init_read_variable_length;
-            return_state                    <= read_status_1;
+            return_state                    <= apply_delta_time;
 
 
           when done =>
+            increment_current_track;
             null;
 
           when error_state =>
@@ -232,6 +282,11 @@ begin
 
   -- mux the read address output
   read_addr <= internals(current_track).read_addr;
+
+  midi_nos(0) <= internals(1).midi_no;
+  midi_nos(1) <= internals(2).midi_no;
+  midi_nos(2) <= internals(3).midi_no;
+  midi_nos(3) <= internals(4).midi_no;
 
 end architecture;
 

@@ -39,6 +39,13 @@ architecture rtl of midi_top is
   signal num_chunks : integer range 0 to max_num_tracks - 1;
   signal playing_en : std_logic;
 
+  constant midi_pulse_time   : time    := 5 ms;
+  --constant midi_pulse_time   : time    := 5 us;
+  constant midi_pulse_clocks : integer := midi_pulse_time / clk_period;
+  signal midi_pulse_counter  : integer range 0 to midi_pulse_clocks - 1;
+
+  signal midi_pulses     : midi_pulse_arr;
+  signal midi_pulse_acks : midi_pulse_arr;
 begin
   contents_count <= contents_count_int;
   midi_nos       <= midi_nos_int;
@@ -68,38 +75,53 @@ begin
       num_chunks     => num_chunks,
       enable_decoder => enable_decoder,
       errors         => errors,
-      midi_no_1      => midi_nos_int(2),
       playing_en     => playing_en
       );
 
   track_decoder_1 : entity work.track_decoder
     port map (
-      ctrl       => ctrl,
-      playing_en => playing_en,
-      chunk_data => chunk_data,
-      num_chunks => num_chunks,
+      ctrl            => ctrl,
+      midi_pulses     => midi_pulses,
+      midi_pulse_acks => midi_pulse_acks,
+      playing_en      => playing_en,
+      chunk_data      => chunk_data,
+      num_chunks      => num_chunks,
 
       midi_ram_data => midi_ram_data,
-      read_addr     => read_addr_track_dec);
-
-  choose_midi_no : process(ctrl.clk) is
-  begin
-    if rising_edge(ctrl.clk) then
-      if ctrl.reset_n = '0' then
-        midi_nos_int(0) <= 69;
-      else
-        if midi_nos_int(0) < midi_note_t'high and buttons(u).pressed = '1' then
-          midi_nos_int(0) <= midi_nos_int(0) + 1;
-        elsif midi_nos_int(0) > midi_note_t'low and buttons(j).pressed = '1' then
-          midi_nos_int(0) <= midi_nos_int(0) - 1;
-        end if;
-      end if;
-    end if;
-  end process;
+      read_addr     => read_addr_track_dec,
+      midi_nos      => midi_nos_int
+      );
 
 
   read_addr <= read_addr_midi_dec when playing_en = '0'
                else read_addr_track_dec;
 
 
+  gen_midi_pulse_strobe : process(ctrl.clk)
+  begin
+    if rising_edge(ctrl.clk) then
+      if ctrl.reset_n = '0' then
+        for i in 1 to max_num_tracks - 1 loop
+          midi_pulses(i) <= '0';
+        end loop;
+      else
+
+        for i in 1 to max_num_tracks - 1 loop
+          if midi_pulse_acks(i) = '1' then
+            midi_pulses(i) <= '0';
+          end if;
+        end loop;
+
+
+        if midi_pulse_counter = midi_pulse_clocks - 1 then
+          midi_pulse_counter <= 0;
+          for i in 1 to max_num_tracks - 1 loop
+            midi_pulses(i) <= '1';
+          end loop;
+        else
+          midi_pulse_counter <= midi_pulse_counter + 1;
+        end if;
+      end if;
+    end if;
+  end process;
 end;

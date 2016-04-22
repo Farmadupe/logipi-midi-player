@@ -147,6 +147,8 @@ package midi_pkg is
     length    : unsigned(31 downto 0);
   end record;
   type chunk_data_t_arr is array(integer range 0 to max_num_tracks - 1) of chunk_data_t;
+
+  type midi_pulse_arr is array (1 to max_num_tracks - 1) of std_logic;
 end;
 
 package body midi_pkg is
