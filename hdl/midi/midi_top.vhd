@@ -39,10 +39,21 @@ architecture rtl of midi_top is
   signal num_chunks : integer range 0 to max_num_tracks - 1;
   signal playing_en : std_logic;
 
-  constant midi_pulse_time   : time    := 5 ms;
+
   --constant midi_pulse_time   : time    := 5 us;
+
+  constant midi_pulse_time   : time    := 5 ms;
   constant midi_pulse_clocks : integer := midi_pulse_time / clk_period;
+
+  constant midi_pulse_time_faster   : time    := 3 ms;
+  constant midi_pulse_faster_clocks : integer := midi_pulse_time / clk_period;
+
+  constant midi_pulse_time_fastest   : time    := 1 ms;
+  constant midi_pulse_fastest_clocks : integer := midi_pulse_time / clk_period;
+  
   signal midi_pulse_counter  : integer range 0 to midi_pulse_clocks - 1;
+  signal midi_pulse_limit :  integer range 0 to midi_pulse_clocks - 1;
+
 
   signal midi_pulses     : midi_pulse_arr;
   signal midi_pulse_acks : midi_pulse_arr;
@@ -101,10 +112,19 @@ begin
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
+        midi_pulse_limit <= midi_pulse_clocks - 1;
         for i in 1 to max_num_tracks - 1 loop
           midi_pulses(i) <= '0';
         end loop;
       else
+
+        if buttons(z).pressed = '1' then
+          midi_pulse_limit <= midi_pulse_clocks - 1;
+        elsif buttons(x).pressed = '1' then
+          midi_pulse_limit <= midi_pulse_faster_clocks - 1;
+        elsif buttons(c).pressed = '1' then
+          midi_pulse_limit <= midi_pulse_faster_clocks - 1;
+        end if;
 
         for i in 1 to max_num_tracks - 1 loop
           if midi_pulse_acks(i) = '1' then

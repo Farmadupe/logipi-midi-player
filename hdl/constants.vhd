@@ -9,7 +9,7 @@ package constants is
   -----------------------------------------------------------------------------
   --sine wave generator configuration
   -- The higher this number, the more concurrent midi notes can be played
-  constant num_sines : integer := 4;
+  constant num_sines : integer := 10;
 
 
   -----------------------------------------------------------------------------
