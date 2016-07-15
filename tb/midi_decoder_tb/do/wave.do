@@ -1,6 +1,6 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
-add wave -noupdate -label ctrl /midi_decoder_tb/top_1/ctrl
+add wave -noupdate -group clk -label ctrl /midi_decoder_tb/top_1/ctrl
 add wave -noupdate -group spi -label spi_rx_1/state /midi_decoder_tb/top_1/spi_top_1/spi_rx_1/state
 add wave -noupdate -group spi -label spi_top_1/new_mcu_to_fpga_data /midi_decoder_tb/top_1/spi_top_1/new_mcu_to_fpga_data
 add wave -noupdate -group spi -label spi_rx_1/new_data /midi_decoder_tb/top_1/spi_top_1/spi_rx_1/new_data
@@ -33,11 +33,11 @@ add wave -noupdate -label current_track /midi_decoder_tb/top_1/midi_top_1/track_
 add wave -noupdate -label state /midi_decoder_tb/top_1/midi_top_1/track_decoder_1/state
 add wave -noupdate -label return_state /midi_decoder_tb/top_1/midi_top_1/track_decoder_1/return_state
 add wave -noupdate -label variable_length -radix decimal /midi_decoder_tb/top_1/midi_top_1/track_decoder_1/variable_length
-add wave -noupdate /midi_decoder_tb/top_1/midi_top_1/midi_pulses
-add wave -noupdate /midi_decoder_tb/top_1/midi_top_1/midi_pulse_acks
-add wave -noupdate -format Analog-Step -height 84 -max 16274.999999999998 -min -12838.0 -radix decimal /midi_decoder_tb/top_1/temp_midi_note_player_1/pcm_out
+add wave -noupdate -label midi_pulses /midi_decoder_tb/top_1/midi_top_1/midi_pulses
+add wave -noupdate -label midi_pulse_acks /midi_decoder_tb/top_1/midi_top_1/midi_pulse_acks
+add wave -noupdate -format Analog-Step -height 84 -label pcm_out -max 16275.0 -min -12838.0 -radix decimal /midi_decoder_tb/top_1/temp_midi_note_player_1/pcm_out
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {25469790000 ps} 0}
+WaveRestoreCursors {{Cursor 1} {100853213713 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 170
 configure wave -valuecolwidth 248
@@ -53,4 +53,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ms
 update
-WaveRestoreZoom {0 ps} {105 ms}
+WaveRestoreZoom {0 ps} {191851747500 ps}

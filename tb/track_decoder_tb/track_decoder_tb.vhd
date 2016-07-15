@@ -8,9 +8,9 @@ use virtual_button_lib.constants.all;
 use virtual_button_lib.uart_constants.all;
 use virtual_button_lib.uart_functions.all;
 
-entity midi_decoder_tb is end;
+entity track_decoder_tb is end;
 
-architecture tb of midi_decoder_tb is
+architecture tb of track_decoder_tb is
 
   signal clk_50mhz         : std_logic;
   signal pb_0              : std_logic := '0';
@@ -95,15 +95,15 @@ begin
 
 
 
+    --file_open(midi_file, "does.mid", read_mode);
     file_open(midi_file, "deck.mid", read_mode);
-    --file_open(midi_file, "zeroes_file", read_mode);
 
     while not endfile(midi_file) loop
       if remaining_bytes /= 0 then
         read(midi_file, read_char);
         midi_byte := std_logic_vector(to_unsigned(character'pos(read_char), 8));
       end if;
-f
+
       if not ready then
         wait until ready;
       end if;

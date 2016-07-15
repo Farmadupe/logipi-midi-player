@@ -42,9 +42,10 @@ architecture rtl of top is
   signal clk : std_logic;
 
   -- uart signals
-  signal uart_rx_data    : std_logic_vector(7 downto 0);
-  signal uart_received   : std_logic;
-  signal run_counter_dbg : std_logic;
+  signal uart_rx_data       : std_logic_vector(7 downto 0);
+  signal uart_received      : std_logic;
+  signal uart_framing_error : std_logic;
+  signal run_counter_dbg    : std_logic;
 
   -- button signals
   signal buttons : button_arr;
@@ -82,8 +83,9 @@ begin
       uart_rx => pi_to_fpga_pin,
       uart_tx => fpga_to_pi_pin,
 
-      rx_data  => uart_rx_data,
-      received => uart_received,
+      rx_data       => uart_rx_data,
+      received      => uart_received,
+      framing_error => uart_framing_error,
 
       run_counter_dbg => run_counter_dbg
       );
@@ -163,6 +165,8 @@ begin
       buttons            => buttons,
       cs_n               => cs_n,
       enable_spi_tx      => enable_spi_tx,
+
+      uart_framing_error => uart_framing_error,
 
       midi_ram_contents_count => midi_ram_contents_count,
       enable_decoder          => enable_decoder,

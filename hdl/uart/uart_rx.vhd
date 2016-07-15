@@ -205,7 +205,7 @@ begin
         framing_error <= '0';
       else
         new_data      <= '0';
-        framing_Error <= '0';
+        framing_error <= '0';
         if check_framing_error = '1' and uart_rx = '1' then
           new_Data <= '1';
         elsif check_framing_error = '1' and uart_rx = '0' then

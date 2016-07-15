@@ -23,6 +23,8 @@ entity debug_light_generator is
     cs_n               : in std_logic;
     enable_spi_tx      : in std_logic;
 
+    uart_framing_error : in std_logic;
+
     midi_ram_contents_count : in integer range 0 to midi_file_rx_bram_depth;
     enable_decoder          : in std_logic;
     errors                  : in errors_t;
@@ -83,6 +85,13 @@ begin
         ws2812_data(2) <= ws2812_red;
       else
         ws2812_data(2) <= ws2812_blue;
+      end if;
+
+      -- uart framing error
+      if uart_framing_error = '1' then
+        ws2812_data(3) <= ws2812_blue;
+      else
+        ws2812_data(3) <= ws2812_red;
       end if;
 
       -- Monitor SPI behaviour
