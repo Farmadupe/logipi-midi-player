@@ -23,7 +23,7 @@ entity midi_ram is
     write_in_data : in std_logic_vector(queue_width - 1 downto 0);
 
     -- the long expression is really (addr_length - 1 downto 0), but I couldn't
-    -- write that because VHDL prohibits arre_length from being defined by this
+    -- write that because VHDL prohibits addr_length from being defined by this
     -- point :/
     read_addr      : in  unsigned(integer(ceil(log2(real(queue_depth)))) - 1 downto 0);
     read_out_data  : out std_logic_vector(queue_width - 1 downto 0);

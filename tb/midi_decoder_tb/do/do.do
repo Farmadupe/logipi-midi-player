@@ -11,6 +11,9 @@ file copy -force ../midifiles/zeroes_file .
 
 vsim virtual_button_lib.midi_decoder_tb
 
+
 do wave.do
+
+config wave -signalnamewidth 1
 
 run 100 ms

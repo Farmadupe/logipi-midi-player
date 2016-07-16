@@ -9,6 +9,9 @@ use virtual_button_lib.utils.all;
 use virtual_button_lib.midi_pkg.all;
 
 entity track_decoder is
+  generic(
+    max_read_bytes : integer
+    );
   port(
     ctrl            : in  ctrl_t;
     midi_pulses     : in  midi_pulse_arr;
@@ -17,16 +20,18 @@ entity track_decoder is
     chunk_data      : in  chunk_data_t_arr;
     num_chunks      : in  integer range 0 to max_num_tracks - 1;
 
-    midi_ram_data : in  std_logic_vector(7 downto 0);
-    read_addr     : out unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
+    -- ram interface
+    read_start_addr : out unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0) := (others => '0');
+    read_num_bytes  : out integer range 0 to max_read_bytes;
+    read_en         : out std_logic;
+    read_busy       : in  std_logic;
 
     midi_nos : out midi_note_arr_t
     );
 end;
 
 architecture rtl of track_decoder is
-  constant read_addr_length : integer := integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1
-;
+  constant read_addr_length : integer := integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1;
   type internals_t is record
     unknown_midi_event : std_logic;
     read_addr          : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
@@ -44,9 +49,8 @@ architecture rtl of track_decoder is
     wait_en,
     init_read_addrs,
 
-    init_read_variable_length,
-    read_variable_length_wait_read,
-    read_variable_length_check_value,
+    read_variable_length_1,
+    read_variable_length_2,
 
     apply_delta_time,
     wait_delta_time_and_cede_control,
@@ -77,10 +81,10 @@ architecture rtl of track_decoder is
   signal return_state : state_t;
 
   signal variable_length : unsigned(27 downto 0);
-  signal delta_time      : unsigned(27 downto 0);
 
   signal current_track : integer range 1 to max_num_tracks - 1;
 
+  signal read_busy_d1 : std_logic;
 
   -----------------------------------------------------------------------------
   -- Enumeration of known events
@@ -89,7 +93,17 @@ architecture rtl of track_decoder is
   constant end_of_track  : std_logic_vector(7 downto 0) := x"2F";
   constant track_name    : std_logic_vector(7 downto 0) := x"03";
   constant prefix_port   : std_logic_vector(7 downto 0) := x"21";
+
+
 begin
+
+  delay_read_busy : process(ctrl.clk) is
+  begin
+    if rising_edge(ctrl.clk) then
+      read_busy_d1 <= read_busy;
+    end if;
+  end process;
+
   fsm : process(ctrl.clk)
     procedure inc_addr is
     begin
@@ -103,6 +117,11 @@ begin
       else
         current_track <= current_track + 1;
       end if;
+    end;
+
+    impure function ram_read_finished return boolean is
+    begin
+      return read_busy = '0' and read_busy_d1 = '1';
     end;
 
   begin
@@ -133,7 +152,6 @@ begin
         return_state <= error_state;
 
         variable_length <= (others => '0');
-        delta_time      <= (others => '0');
 
 
 
@@ -154,25 +172,47 @@ begin
             for i in internals'range loop
               internals(i).read_addr <= chunk_data(i).base_addr + 8;
             end loop;
-            state        <= init_read_variable_length;
+            state        <= read_variable_length_1;
             return_state <= apply_delta_time;
 
 
-          when init_read_variable_length =>
+          when read_variable_length_1 =>
             variable_length <= (others => '0');
-            state           <= read_variable_length_wait_read;
 
-          when read_variable_length_wait_read =>
-            state <= read_variable_length_check_value;
+            read_en         <= '1';
+            read_num_bytes  <= 4;
+            read_start_addr_int <= read_start_addr_int + read_num_bytes;
+            state           <= read_variable_length_2;
 
-          when read_variable_length_check_value =>
-            variable_length <= variable_length(20 downto 0) & unsigned(midi_ram_data(6 downto 0));
-            if midi_ram_data(7) = '1' then
-              state <= read_variable_length_wait_read;
-              inc_addr;
-            else
+          when read_variable_length_2 =>
+            read_en <= '0';
+            if ram_read_finished then
+              case midi_ram_out(7) & midi_ram_out(15) & midi_ram_out(23) is
+                when "000" | "001" | "010" | "011" =>
+                  variable_length <= "0000000_0000000_0000000" &
+                                     midi_ram_out(6 downto 0);
+                  read_num_bytes <= 1;
+                when "100" | "101" =>
+                  variable_length <= "0000000_0000000" &
+                                     midi_ram_out(14 downto 8) &
+                                     midi_ram_out(6 downto 0);
+                  read_num_bytes <= 2;
+                when "110" =>
+                  variable_length <= "0000000" & midi_ram_out(22 downto 16) &
+                                     midi_ram_out(14 downto 8) &
+                                     midi_ram_out(6 downto 0);
+                  read_num_bytes <= 3;
+                when "111" =>
+                  variable_length <= midi_ram_out(30 downto 24) &
+                                     midi_ram_out(22 downto 16) &
+                                     midi_ram_out(14 downto 8) &
+                                     midi_ram_out(6 downto 0);
+                  read_num_bytes <= 4;
+              end case;
+
               state <= return_state;
             end if;
+
 
           when apply_delta_time =>
             current_internal.delta_counter <= variable_length;
@@ -207,22 +247,23 @@ begin
 
 
           when read_status_1 =>
-            inc_addr;
-            state <= read_status_2;
+            read_en         <= '1';
+            read_num_bytes  <= 2;
+            read_start_addr <= read_start_addr + read_num_bytes;
+            state           <= read_status_2;
 
           when read_status_2 =>
-            state <= read_status_3;
-
-          when read_status_3 =>
-            --here we implement the running status
-            if midi_ram_data(7) = '1' then
-              current_internal.status         <= midi_ram_data;
-              current_internal.running_status <= '0';
-            else
-              current_internal.running_status <= '1';
+            read_en <= '0';
+            if ram_read_finished then
+              --here we implement the running status
+              if midi_ram_data(7) = '1' then
+                current_internal.status         <= midi_ram_data;
+                current_internal.running_status <= '0';
+              else
+                current_internal.running_status <= '1';
+              end if;
+              state <= dispatch_event;
             end if;
-            state <= dispatch_event;
-
 
 
           when dispatch_event =>
@@ -305,6 +346,8 @@ begin
 
   -- mux the read address output
   read_addr <= current_internal.read_addr;
+
+  read_start_addr <= read_start_addr_int;
 
 
 end architecture;

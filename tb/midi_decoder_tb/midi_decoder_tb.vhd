@@ -103,7 +103,7 @@ begin
         read(midi_file, read_char);
         midi_byte := std_logic_vector(to_unsigned(character'pos(read_char), 8));
       end if;
-f
+
       if not ready then
         wait until ready;
       end if;

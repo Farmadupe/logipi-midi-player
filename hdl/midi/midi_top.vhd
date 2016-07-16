@@ -50,38 +50,72 @@ architecture rtl of midi_top is
 
   constant midi_pulse_time_fastest   : time    := 1 ms;
   constant midi_pulse_fastest_clocks : integer := midi_pulse_time / clk_period;
-  
-  signal midi_pulse_counter  : integer range 0 to midi_pulse_clocks - 1;
-  signal midi_pulse_limit :  integer range 0 to midi_pulse_clocks - 1;
+
+  signal midi_pulse_counter : integer range 0 to midi_pulse_clocks - 1;
+  signal midi_pulse_limit   : integer range 0 to midi_pulse_clocks - 1;
 
 
   signal midi_pulses     : midi_pulse_arr;
   signal midi_pulse_acks : midi_pulse_arr;
+
+  -- midi ram signals 
+  constant max_read_bytes : integer := 10;
+  signal read_start_addr  : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
+  signal read_num_bytes   : integer range 0 to max_read_bytes;
+  signal read_en          : std_logic;
+  signal read_busy        : std_logic;
+  signal midi_ram_out     : std_logic_vector((max_read_bytes * 8) - 1 downto 0);
+
+  -- midi ram signals from midi decoder
+  signal read_start_addr_midi_dec : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
+  signal read_num_bytes_midi_dec  : integer range 0 to max_read_bytes;
+  signal read_en_midi_dec         : std_logic;
+
+  -- midi ram signals from track decoder
+  signal read_start_addr_track_dec : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
+  signal read_num_bytes_track_dec  : integer range 0 to max_read_bytes;
+  signal read_en_track_dec         : std_logic;
+
 begin
   contents_count <= contents_count_int;
   midi_nos       <= midi_nos_int;
 
-  midi_ram_1 : entity work.midi_ram
+
+  midi_ram_top_1 : entity work.midi_ram_top
     generic map (
-      queue_depth => midi_file_rx_bram_depth,
-      queue_width => 8)
+      max_read_bytes => max_read_bytes,
+      queue_width    => 8)
     port map (
-      ctrl           => ctrl,
-      enqueue        => enqueue,
-      write_in_data  => write_in_data,
-      read_addr      => read_addr,
-      read_out_data  => midi_ram_data,
-      empty          => empty,
-      full           => full,
-      contents_count => contents_count_int);
+      ctrl            => ctrl,
+      enqueue         => enqueue,
+      write_in_data   => write_in_data,
+      empty           => empty,
+      full            => full,
+      contents_count  => contents_count_int,
+      read_start_addr => read_start_addr,
+      read_num_bytes  => read_num_bytes,
+      read_en         => read_en,
+      read_busy       => read_busy,
+      midi_ram_out    => midi_ram_out);
+
+
 
   midi_decoder_1 : entity work.midi_decoder
+    generic map(
+      max_read_bytes => max_read_bytes
+      )
     port map (
-      ctrl           => ctrl,
-      buttons        => buttons,
-      read_addr      => read_addr_midi_dec,
-      midi_ram_data  => midi_ram_data,
-      contents_count => contents_count_int,
+      ctrl    => ctrl,
+      buttons => buttons,
+
+      -- ram interface
+      read_start_addr => read_start_addr_midi_dec,
+      read_num_bytes  => read_num_bytes_midi_dec,
+      read_en         => read_en_midi_dec,
+      read_busy       => read_busy,
+      midi_ram_out    => midi_ram_out,
+      contents_count  => contents_count_int,
+
       chunk_data     => chunk_data,
       num_chunks     => num_chunks,
       enable_decoder => enable_decoder,
@@ -92,20 +126,37 @@ begin
   track_decoder_1 : entity work.track_decoder
     port map (
       ctrl            => ctrl,
+      
       midi_pulses     => midi_pulses,
       midi_pulse_acks => midi_pulse_acks,
+     
+      
       playing_en      => playing_en,
       chunk_data      => chunk_data,
       num_chunks      => num_chunks,
 
-      midi_ram_data => midi_ram_data,
-      read_addr     => read_addr_track_dec,
+      -- ram interface
+      read_start_addr => read_start_addr_track_dec,
+      read_num_bytes  => read_num_bytes_track_dec,
+      read_en         => read_en_track_dec,
+      read_busy       => read_busy,
+      midi_ram_out    => midi_ram_out,
+      contents_count  => contents_count_int,
+
+
+      
       midi_nos      => midi_nos_int
       );
 
 
-  read_addr <= read_addr_midi_dec when playing_en = '0'
-               else read_addr_track_dec;
+  read_start_addr <= read_start_addr_midi_dec when playing_en = '0'
+                     else read_start_addr_track_dec;
+
+  read_num_bytes <= read_num_bytes_midi_dec when playing_en = '0'
+                    else read_num_bytes_track_dec;
+
+  read_en <= read_en_midi_dec when playing_en = '0' else
+             read_en_track_dec;
 
 
   gen_midi_pulse_strobe : process(ctrl.clk)

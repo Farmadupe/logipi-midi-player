@@ -1,5 +1,10 @@
 -- Tweakable constants
 
+library ieee;
+use ieee.std_logic_1164.all;
+
+use work.utils.all;
+
 package constants is
   constant clk_period : time := 1 sec / 50_000_000;
 
@@ -48,4 +53,11 @@ package constants is
   -- midi constants
   -- The maximum number of tracks in a midi file that may be simulataneously decoded.
   constant max_num_tracks : integer := 20;
+
+  -----------------------------------------------------------------------------
+  -- Midi track constants.
+  -- Record some constant data as defined in the midi format.
+  -- The midi spec expects MThd to be the first four bytes of a midi file.
+  constant mthd : std_logic_vector(31 downto 0) := to_slv("MThd");
+  constant mtrk : std_logic_vector(31 downto 0) := to_slv("MTrk");
 end;

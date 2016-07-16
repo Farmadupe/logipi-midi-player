@@ -20,11 +20,20 @@ use virtual_button_lib.button_pkg.all;
 use virtual_button_lib.midi_pkg.all;
 
 entity midi_decoder is
+  generic(
+    max_read_bytes : integer
+    );
   port(
-    ctrl           : in  ctrl_t;
-    buttons        : in  button_arr;
-    read_addr      : out unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0) := (others => '0');
-    midi_ram_data  : in  std_logic_vector(7 downto 0);
+    ctrl    : in ctrl_t;
+    buttons : in button_arr;
+
+    -- ram interface
+    read_start_addr : out unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0) := (others => '0');
+    read_num_bytes  : out integer range 0 to max_read_bytes;
+    read_en         : out std_logic;
+    read_busy       : in  std_logic;
+
+    midi_ram_out   : in  std_logic_vector((max_read_bytes * 8) - 1 downto 0);
     contents_count : in  natural range 0 to midi_file_rx_bram_depth;
     chunk_data     : out chunk_data_t_arr;
     num_chunks     : out integer range 0 to max_num_tracks - 1;
@@ -35,42 +44,22 @@ entity midi_decoder is
 end;
 
 architecture rtl of midi_decoder is
-  signal read_addr_noreg    : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
-  signal read_addr_int      : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
-  signal enable_decoder_int : std_logic;
+  signal read_start_addr_int : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
+  signal enable_decoder_int  : std_logic;
+
+  signal read_num_bytes_int : integer range 0 to max_read_bytes;
 
   type midi_decoder_state_t is (
     initial_wait,
 
-    check_mthd_1,
-    check_mthd_2,
-    check_mthd_3,
-    check_mthd_4,
-    check_mthd_5,
-    check_mthd_6,
-    read_format_1,
-    read_format_2,
-    read_format_3,
-    read_format_4,
-    read_num_tracks_1,
-    read_num_tracks_2,
-    read_num_tracks_3,
-    read_num_tracks_4,
-    read_div_1,
-    read_div_2,
-    read_div_3,
-    read_div_4,
-    init_read_next_chunk,
-    read_chunk_1,
-    read_chunk_2,
-    read_chunk_3,
-    read_chunk_4,
-    read_chunk_5,
-    read_chunk_6,
-    read_chunk_7,
-    read_chunk_8,
-    read_chunk_9,
-    dispatch_end_of_chunk,
+    read_chunk_header_1,
+    read_chunk_header_2,
+
+    read_mthd_1,
+    read_mthd_2,
+
+    update_track_details,
+
     done
     );
   signal state : midi_decoder_state_t;
@@ -83,6 +72,7 @@ architecture rtl of midi_decoder is
     division_ticks : unsigned(15 downto 0);
   end record;
 
+  signal first_chunk       : std_logic;
   signal errors_int        : errors_t;
   signal errors_noreg      : errors_t;
   signal header_data       : header_data_t;
@@ -96,11 +86,17 @@ architecture rtl of midi_decoder is
   signal chunk_addr    : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
   signal chunk_length  : unsigned(31 downto 0);
 
+  -- ram related signals
+  signal read_busy_d1 : std_logic;
+
+
+
+
 begin
-  read_addr      <= read_addr_int;
-  enable_decoder <= enable_decoder_int;
-  errors         <= errors_int;
-  chunk_data     <= chunk_data_int;
+  read_start_addr <= read_start_addr_int;
+  enable_decoder  <= enable_decoder_int;
+  errors          <= errors_int;
+  chunk_data      <= chunk_data_int;
 
 
   -- Once the user is sure that the RAM is full of midi data, they will press q
@@ -118,214 +114,127 @@ begin
     end if;
   end process;
 
-  fsm : process(ctrl.clk) is
-    function to_slv(c : character) return std_logic_vector is
+  delay_read_busy : process(ctrl.clk) is
+  begin
+    if rising_edge(ctrl.clk) then
+      read_busy_d1 <= read_busy;
+    end if;
+  end process;
+
+  midi_decoder_fsm : process(ctrl.clk) is
+
+
+    impure function ram_read_finished return boolean is
     begin
-      return std_logic_vector(to_unsigned(character'pos(c), 8));
+      return read_busy = '0' and read_busy_d1 = '1';
     end;
+
+    -- Make setting literal addresses slightly easier
+    impure function format_addr(addr : std_logic_vector) return unsigned is
+    begin
+      return resize(unsigned(addr), read_start_addr_int'length);
+    end;
+
   begin
     if rising_edge(ctrl.clk) then
       if ctrl.reset_n = '0' then
-        read_addr_int  <= (others => '0');
-        state          <= initial_wait;
-        errors_int     <= (others => '0');
-        header_data    <= (others => (others => '0'));
-        chunk_is_mtrk  <= '1';
-        chunk_no       <= 0;
-        chunk_data_int <= (others => (others => (others => '0')));
+        read_start_addr_int <= (others => '0');
+        state               <= initial_wait;
+        errors_int          <= (others => '0');
+        header_data         <= (others => (others => '0'));
+        chunk_no            <= 0;
+        chunk_data_int      <= (others => (others => (others => '0')));
 
-        -- We set this so that the FSM can read the start of the very first
-        -- chunk. The very first chunk is always in address 14.
-        chunk_addr <= to_unsigned(14, chunk_addr'length);
 
+        chunk_addr   <= to_unsigned(0, chunk_addr'length);
         chunk_length <= to_unsigned(0, chunk_length'length);
 
-        playing_en <= '0';
+        playing_en  <= '0';
+        read_en     <= '0';
+        first_chunk <= '1';
       else
         case state is
           when initial_wait =>
             if enable_decoder_int = '1' then
-              state <= check_mthd_1;
+              state <= read_chunk_header_1;
             end if;
 
-          -- These states check byte-by-byte, that the midi header exists in
-          -- the received data
-          when check_mthd_1 =>
-            read_addr_int <= to_unsigned(0, read_addr_int'length);
-            state         <= check_mthd_2;
+          -- Reads the first 8 fixed bytes of a chunk.
+          when read_chunk_header_1 =>
+            -- Preset the errors. Hopefully we will clear them very soon.
+            errors_int.no_mthd <= '1';
 
-          when check_mthd_2 =>
-            read_addr_int <= read_addr_int + 1;
-            state         <= check_mthd_3;
-
-          when check_mthd_3 =>
-            if midi_ram_data /= to_slv('M') then
-              errors_int.no_mthd <= '1';
-            end if;
-            read_addr_int <= read_addr_int + 1;
-            state         <= check_mthd_4;
-
-          when check_mthd_4 =>
-            if midi_ram_data /= to_slv('T') then
-              errors_int.no_mthd <= '1';
-            end if;
-            read_addr_int <= read_addr_int + 1;
-            state         <= check_mthd_5;
-
-          when check_mthd_5 =>
-            if midi_ram_data /= to_slv('h') then
-              errors_int.no_mthd <= '1';
-            end if;
-            read_addr_int <= read_addr_int + 1;
-            state         <= check_mthd_6;
-
-          when check_mthd_6 =>
-            if midi_ram_data /= to_slv('d') then
-              errors_int.no_mthd <= '1';
-            end if;
-            state <= read_format_1;
-
-
-
-          when read_format_1 =>
-            read_addr_int <= to_unsigned(8, read_addr_int'length);
-            state         <= read_format_2;
-
-          when read_format_2 =>
-            read_addr_int <= read_addr_int + 1;
-            state         <= read_format_3;
-
-          when read_format_3 =>
-            if midi_ram_data /= "00000000" then
-              errors_int.not_format_1 <= '1';
-            end if;
-            state <= read_format_4;
-
-
-          when read_format_4 =>
-            if midi_ram_data /= "00000001" then
-              errors_int.not_format_1 <= '1';
-            end if;
-            state <= read_num_tracks_1;
-
-
-
-
-          when read_num_tracks_1 =>
-            read_addr_int <= to_unsigned(10, read_addr_int'length);
-            state         <= read_num_tracks_2;
-
-          when read_num_tracks_2 =>
-            read_addr_int <= read_addr_int + 1;
-            state         <= read_num_tracks_3;
-
-          when read_num_tracks_3 =>
-            header_data.num_tracks(15 downto 8) <= unsigned(midi_ram_data);
-            state                               <= read_num_tracks_4;
-
-          when read_num_tracks_4 =>
-            header_data.num_tracks(7 downto 0) <= unsigned(midi_ram_data);
-            state                              <= read_div_1;
-
-
-
-          when read_div_1 =>
-            read_addr_int <= to_unsigned(12, read_addr_int'length);
-            state         <= read_div_2;
-
-          when read_div_2 =>
-            read_addr_int <= read_addr_int + 1;
-            state         <= read_div_3;
-
-          when read_div_3 =>
-            header_data.division_ticks(15 downto 8) <= unsigned(midi_ram_data);
-            state                                   <= read_div_4;
-
-          when read_div_4 =>
-            header_data.division_ticks(7 downto 0) <= unsigned(midi_ram_data);
-            state                                  <= init_read_next_chunk;
-
-
-
-          when init_read_next_chunk =>
-            chunk_is_mtrk <= '1';
-            -- The synth tool should report a truncation warning here, because
-            -- chunk_length is being truncated to the size of chunk_addr. We
-            -- can safely ignore it for now, because data would only be lost
-            -- here if there was more midi data than could fit in block ram.
-            read_addr_int <= chunk_addr;
-            state         <= read_chunk_1;
-
-
-
-          when read_chunk_1 =>
-
-            read_addr_int <= read_addr_int + 1;
-            state         <= read_chunk_2;
-
-          when read_chunk_2 =>
-            read_addr_int <= read_addr_int + 1;
-            if midi_ram_data /= to_slv('M') then
-              chunk_is_mtrk <= '0';
-            end if;
-            state <= read_chunk_3;
-
-          when read_chunk_3 =>
-            read_addr_int <= read_addr_int + 1;
-            if midi_ram_data /= to_slv('T') then
-              chunk_is_mtrk <= '0';
-            end if;
-            state <= read_chunk_4;
-
-          when read_chunk_4 =>
-            read_addr_int <= read_addr_int + 1;
-            if midi_ram_data /= to_slv('r') then
-              chunk_is_mtrk <= '0';
-            end if;
-            state <= read_chunk_5;
-
-          when read_chunk_5 =>
-            read_addr_int <= read_addr_int + 1;
-            if midi_ram_data /= to_slv('k') then
-              chunk_is_mtrk <= '0';
-            end if;
-            state <= read_chunk_6;
-
-          when read_chunk_6 =>
-            read_addr_int              <= read_addr_int + 1;
-            chunk_length(31 downto 24) <= unsigned(midi_ram_data);
-            state                      <= read_chunk_7;
-
-          when read_chunk_7 =>
-            read_addr_int              <= read_addr_int + 1;
-            chunk_length(23 downto 16) <= unsigned(midi_ram_data);
-            state                      <= read_chunk_8;
-
-          when read_chunk_8 =>
-            chunk_length(15 downto 8) <= unsigned(midi_ram_data);
-            state                     <= read_chunk_9;
-
-          when read_chunk_9 =>
-            chunk_length(7 downto 0) <= unsigned(midi_ram_data);
-            state                    <= dispatch_end_of_chunk;
-
-          -- If we have correctly read a track chunk then store it.
-          --
-          -- Check if there are more chunks after this one. If so, then carry
-          -- on reading.
-          when dispatch_end_of_chunk =>
-            if chunk_is_mtrk = '1' then
-              chunk_data_int(chunk_no).length    <= chunk_length;
-              chunk_data_int(chunk_no).base_addr <= chunk_addr;
-              chunk_no                           <= chunk_no + 1;
+            -- Find the start of the chunk we are about to read by examining
+            -- summing the addr and length of the previous chunk
+            if first_chunk = '0' then
+              chunk_addr          <= resize(8 + chunk_addr + chunk_length, chunk_addr'length);
+              read_start_addr_int <= resize(8 + chunk_addr + chunk_length, chunk_addr'length);
             end if;
 
+            read_num_bytes_int <= 8;
+
+            -- Check if we are done by seeing if there is
+            -- room for another chunk before the end of the midi file.
             if chunk_addr + chunk_length + 8 >= contents_count then
               state <= done;
             else
-              chunk_addr <= chunk_addr + resize(chunk_length, chunk_addr'length) + 8;
-              state      <= init_read_next_chunk;
+              state   <= read_chunk_header_2;
+              read_en <= '1';
             end if;
+
+          when read_chunk_header_2 =>
+            read_en <= '0';
+            if ram_read_finished then
+              chunk_length <= unsigned(midi_ram_out(31 downto 0));
+              case midi_ram_out(63 downto 32) is
+                when mthd   => state <= read_mthd_1;
+                when mtrk   => state <= update_track_details;
+                when others => report "unknown chunk type found" severity note;
+              end case;
+
+            end if;
+
+
+
+          -- Check that the midi header exists in the received data. This is a
+          -- sanity check to make sure we actually have a midi file.
+          --
+          -- Also check that this midi file is format 1. This midi decoder
+          -- can only play format 1 tracks.
+          when read_mthd_1 =>
+            first_chunk        <= '0';
+            errors_int.no_mthd <= '0';
+
+            read_start_addr_int <= chunk_addr + 8;
+            read_en             <= '1';
+            read_num_bytes_int  <= 6;
+            state               <= read_mthd_2;
+
+          when read_mthd_2 =>
+            read_en <= '0';
+
+            if ram_read_finished then
+
+              if to_integer(unsigned(midi_ram_out(47 downto 32))) = 1 then
+                errors_int.not_format_1 <= '0';
+              else
+                errors_int.not_format_1 <= '1';
+              end if;
+
+              header_data.num_tracks     <= unsigned(midi_ram_out(31 downto 16));
+              header_data.division_ticks <= unsigned(midi_ram_out(15 downto 0));
+
+              state <= read_chunk_header_1;
+            end if;
+
+
+          -- If we have correctly read a track chunk then store it.
+          when update_track_details =>
+            chunk_data_int(chunk_no).length    <= chunk_length;
+            chunk_data_int(chunk_no).base_addr <= chunk_addr;
+            chunk_no                           <= chunk_no + 1;
+            state                              <= read_chunk_header_1;
+
 
 
           when done =>
@@ -338,5 +247,7 @@ begin
       end if;
     end if;
   end process;
+
+  read_num_bytes <= read_num_bytes_int;
 
 end;
