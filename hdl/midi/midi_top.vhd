@@ -40,9 +40,8 @@ architecture rtl of midi_top is
   signal playing_en : std_logic;
 
 
-  --constant midi_pulse_time   : time    := 5 us;
-
-  constant midi_pulse_time   : time    := 5 ms;
+  constant midi_pulse_time   : time    := 1 us;
+  --constant midi_pulse_time   : time    := 5 ms;
   constant midi_pulse_clocks : integer := midi_pulse_time / clk_period;
 
   constant midi_pulse_time_faster   : time    := 3 ms;
@@ -108,12 +107,13 @@ begin
       ctrl    => ctrl,
       buttons => buttons,
 
-      -- ram interface
+      -- ram read interface
       read_start_addr => read_start_addr_midi_dec,
       read_num_bytes  => read_num_bytes_midi_dec,
       read_en         => read_en_midi_dec,
       read_busy       => read_busy,
       midi_ram_out    => midi_ram_out,
+      
       contents_count  => contents_count_int,
 
       chunk_data     => chunk_data,
@@ -124,6 +124,9 @@ begin
       );
 
   track_decoder_1 : entity work.track_decoder
+    generic map (
+      max_read_bytes => 10
+      )
     port map (
       ctrl            => ctrl,
       
@@ -135,16 +138,14 @@ begin
       chunk_data      => chunk_data,
       num_chunks      => num_chunks,
 
-      -- ram interface
+      -- ram read interface
       read_start_addr => read_start_addr_track_dec,
       read_num_bytes  => read_num_bytes_track_dec,
       read_en         => read_en_track_dec,
       read_busy       => read_busy,
       midi_ram_out    => midi_ram_out,
-      contents_count  => contents_count_int,
+     
 
-
-      
       midi_nos      => midi_nos_int
       );
 

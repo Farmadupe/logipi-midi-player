@@ -27,13 +27,14 @@ entity midi_decoder is
     ctrl    : in ctrl_t;
     buttons : in button_arr;
 
-    -- ram interface
+    -- ram read interface
     read_start_addr : out unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0) := (others => '0');
     read_num_bytes  : out integer range 0 to max_read_bytes;
     read_en         : out std_logic;
     read_busy       : in  std_logic;
-
     midi_ram_out   : in  std_logic_vector((max_read_bytes * 8) - 1 downto 0);
+
+    
     contents_count : in  natural range 0 to midi_file_rx_bram_depth;
     chunk_data     : out chunk_data_t_arr;
     num_chunks     : out integer range 0 to max_num_tracks - 1;
@@ -162,7 +163,6 @@ begin
           -- Reads the first 8 fixed bytes of a chunk.
           when read_chunk_header_1 =>
             -- Preset the errors. Hopefully we will clear them very soon.
-            errors_int.no_mthd <= '1';
 
             -- Find the start of the chunk we are about to read by examining
             -- summing the addr and length of the previous chunk
