@@ -34,13 +34,14 @@ end;
 architecture rtl of track_decoder is
   constant read_addr_length : integer := integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1;
   type internals_t is record
-    unknown_midi_event : std_logic;
-    read_start_addr    : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
-    status             : std_logic_vector(7 downto 0);
-    running_status     : std_logic;
-    midi_no            : midi_note_t;
-    volume             : unsigned(7 downto 0);
-    delta_counter      : unsigned(27 downto 0);
+    first_event          : std_logic;
+    read_start_addr      : unsigned(integer(ceil(log2(real(midi_file_rx_bram_depth)))) - 1 downto 0);
+    status               : std_logic_vector(7 downto 0);
+    last_byte_was_status : std_logic;
+    unknown_midi_event   : std_logic;
+    midi_no              : midi_note_t;
+    volume               : unsigned(7 downto 0);
+    delta_counter        : unsigned(27 downto 0);
   end record;
   type internals_t_arr is array(1 to max_num_tracks - 1) of internals_t;
   signal internals        : internals_t_arr;
@@ -58,7 +59,8 @@ architecture rtl of track_decoder is
     apply_delta_time,
     wait_delta_time_and_cede_control,
     wait_delta_time_and_cede_control_delay,
-    increment_current_internal,
+    increment_current_internal_1,
+    increment_current_internal_2,
 
     read_status_1,
     read_status_2,
@@ -130,24 +132,26 @@ begin
       if ctrl.reset_n = '0' then
 
         internals <= (
-          others               => (
-            read_start_addr    => (others => '0'),
-            status             => (others => '0'),
-            running_status     => '0',
-            unknown_midi_event => '0',
-            midi_no            => midi_note_t'low,
-            volume             => (others => '0'),
-            delta_counter      => (others => '0')
+          others                 => (
+            first_event          => '1',
+            read_start_addr      => (others => '0'),
+            status               => (others => '0'),
+            last_byte_was_status => '0',
+            unknown_midi_event   => '0',
+            midi_no              => midi_note_t'low,
+            volume               => (others => '0'),
+            delta_counter        => (others => '0')
             ));
 
         current_internal <= (
-          read_start_addr    => (others => '0'),
-          status             => (others => '0'),
-          running_status     => '0',
-          unknown_midi_event => '0',
-          midi_no            => midi_note_t'low,
-          volume             => (others => '0'),
-          delta_counter      => (others => '0')
+          first_event          => '1',
+          read_start_addr      => (others => '0'),
+          status               => (others => '0'),
+          last_byte_was_status => '0',
+          unknown_midi_event   => '0',
+          midi_no              => midi_note_t'low,
+          volume               => (others => '0'),
+          delta_counter        => (others => '0')
           );
 
         state        <= wait_en;
@@ -193,11 +197,11 @@ begin
           when read_variable_length_3 =>
             read_en <= '0';
             if ram_read_finished then
-              variable_length                  <= variable_length(variable_length'left downto 7) & unsigned(midi_ram_out(6 downto 0));
+              variable_length                  <= variable_length(variable_length'left - 7 downto 0) & unsigned(midi_ram_out(6 downto 0));
               current_internal.read_start_addr <= current_internal.read_start_addr + read_num_bytes_int;
 
               if midi_ram_out(7) = '1' then
-                state <= read_variable_length_1;
+                state <= read_variable_length_2;
               else
                 state <= return_state;
               end if;
@@ -222,7 +226,8 @@ begin
               -- Now we are switching midi track, so we must put the current
               -- track back in storage and get another one out.
               internals(current_track) <= current_internal;
-              state                    <= increment_current_internal;
+              internals(current_track).first_event <= '0';
+              state                    <= increment_current_internal_1;
               increment_current_track;
             end if;
 
@@ -231,9 +236,17 @@ begin
           when wait_delta_time_and_cede_control_delay =>
             state <= wait_delta_time_and_cede_control;
 
-          when increment_current_internal =>
+          when increment_current_internal_1 =>
             current_internal <= internals(current_track);
-            state            <= wait_delta_time_and_cede_control;
+            state            <= increment_current_internal_2;
+
+          when increment_current_internal_2 =>
+            if current_internal.first_event = '1' then
+              state                        <= read_variable_length_1;
+              return_state                 <= apply_delta_time;
+            else
+              state <= wait_delta_time_and_cede_control;
+            end if;
 
 
           when read_status_1 =>
@@ -246,18 +259,29 @@ begin
             if ram_read_finished then
               current_internal.read_start_addr <= current_internal.read_start_addr + read_num_bytes_int;
 
-              current_internal.status <= midi_ram_out(7 downto 0);
               --here we implement the running status
               if midi_ram_out(7) = '1' then
-                current_internal.running_status <= '0';
+                current_internal.status         <= midi_ram_out(7 downto 0);
+                current_internal.last_byte_was_status <= '1';
               else
-                current_internal.running_status <= '1';
+                current_internal.last_byte_was_status <= '0';
               end if;
               state <= dispatch_event;
             end if;
 
-
+            -- If last_byte_was_status = '1', then the last byte we read from
+            -- ram was a data byte,  If last_byte_was_status = '0', then that
+            -- data byte was read and the pointer is looking at the next data
+            -- byte.
+            --
+            -- To remove confusion, in this state, we subtract 1 from the ram
+            -- read pointer to unify that situation and make sure that the read
+            -- pointer is at the first data byte.
           when dispatch_event =>
+            if current_internal.last_byte_was_status = '0' then
+              current_internal.read_start_addr <= current_internal.read_start_addr - 1;
+            end if;
+            
             if current_internal.status = meta_event then
               state <= dispatch_meta_1;
 
@@ -294,7 +318,7 @@ begin
             return_state <= skip_over_meta_event_2;
 
           when skip_over_meta_event_2 =>
-            current_internal.read_start_addr <= current_internal.read_start_addr + 1 +
+            current_internal.read_start_addr <= current_internal.read_start_addr +
                                                 resize(variable_length, read_addr_length);
             state        <= read_variable_length_1;
             return_state <= apply_delta_time;

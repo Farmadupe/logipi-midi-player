@@ -40,8 +40,8 @@ architecture rtl of midi_top is
   signal playing_en : std_logic;
 
 
-  constant midi_pulse_time   : time    := 1 us;
-  --constant midi_pulse_time   : time    := 5 ms;
+  --constant midi_pulse_time   : time    := 1 us;
+  constant midi_pulse_time   : time    := 5 ms;
   constant midi_pulse_clocks : integer := midi_pulse_time / clk_period;
 
   constant midi_pulse_time_faster   : time    := 3 ms;

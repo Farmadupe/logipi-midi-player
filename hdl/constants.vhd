@@ -52,7 +52,7 @@ package constants is
   -----------------------------------------------------------------------------
   -- midi constants
   -- The maximum number of tracks in a midi file that may be simulataneously decoded.
-  constant max_num_tracks : integer := 20;
+  constant max_num_tracks : integer := 5;
 
   -----------------------------------------------------------------------------
   -- Midi track constants.
